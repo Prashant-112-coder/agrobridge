@@ -24,10 +24,29 @@ const PROJECT_ID = "agrobridge-ai";
 // EARTH ENGINE AUTHENTICATION
 // ============================================================
 
-// Load Google Earth Engine service-account credentials
-const privateKey = JSON.parse(
-  fs.readFileSync("./.private-key.json", "utf8")
-);
+// ============================================================
+// EARTH ENGINE CREDENTIALS
+// Local development uses .private-key.json.
+// Render uses the EE_PRIVATE_KEY environment variable.
+// ============================================================
+
+let privateKey;
+
+if (process.env.EE_PRIVATE_KEY) {
+
+  // Render / production
+  privateKey = JSON.parse(
+    process.env.EE_PRIVATE_KEY
+  );
+
+} else {
+
+  // Local development
+  privateKey = JSON.parse(
+    fs.readFileSync("./.private-key.json", "utf8")
+  );
+
+}
 
 // Authenticate with Google Earth Engine
 ee.data.authenticateViaPrivateKey(
