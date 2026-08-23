@@ -57,7 +57,7 @@ function App() {
     try {
 
       const res = await fetch(
-        "http://localhost:5000/api/farm",
+        "https://agrobridge-backend-gjbk.onrender.com/api/farm",
         {
           method: "POST",
 
@@ -126,7 +126,7 @@ function App() {
       setSoilLoading(true);
 
       const res = await fetch(
-        "http://localhost:5000/api/soil",
+        "https://agrobridge-backend-gjbk.onrender.com/api/soil",
         {
           method: "POST",
 
@@ -180,7 +180,7 @@ function App() {
       setWeatherLoading(true);
 
       const res = await fetch(
-        "http://localhost:5000/api/weather",
+        "https://agrobridge-backend-gjbk.onrender.com/api/weather",
         {
           method: "POST",
 
