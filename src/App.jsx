@@ -6,8 +6,12 @@ const API_BASE = "https://agrobridge-backend-gjbk.onrender.com";
 
 const initialForm = {
   farmerName: "",
-  latitude: "",
-  longitude: "",
+  country: "India",
+  state: "Karnataka",
+  taluk: "Mandya",
+  village: "Mandya",
+  latitude: "12.5218",
+  longitude: "76.8951",
   crop: "",
   area: "",
   cropAge: "",
@@ -28,16 +32,59 @@ const crops = ["Tomato", "Rice", "Wheat", "Maize", "Sugarcane", "Cotton", "Ragi"
 const soilTypes = ["Black Soil", "Red Soil", "Alluvial Soil", "Sandy Soil", "Clay Soil", "Loamy Soil", "Other"];
 const cropStages = ["Seedling", "Vegetative", "Flowering", "Fruiting", "Maturity"];
 
+const locationData = {
+  India: {
+    Karnataka: {
+      "Mandya": ["Mandya", "Hosahalli", "Holalu", "Muthathi"],
+      "Maddur": ["Maddur", "Besagarahalli", "Koppa", "Huliyurdurga"],
+      "Malavalli": ["Malavalli", "Halagur", "Koratagere", "Kirugavalu"],
+      "Krishnarajpet": ["Krishnarajpet", "Kikkeri", "Akkihebbalu", "Bookanakere"],
+      "Srirangapatna": ["Srirangapatna", "Palahalli", "Belagola", "Arakere"],
+      "Nagamangala": ["Nagamangala", "Bellur", "Bindahalli", "Devalapura"],
+      "Pandavapura": ["Pandavapura", "Melukote", "Somanahalli", "Kyathanahalli"],
+    },
+    "Tamil Nadu": {
+      "Coimbatore North": ["Coimbatore", "Kovilpalayam", "Saravanampatti"],
+      "Madurai North": ["Madurai", "Alanganallur", "Vilangudi"],
+    },
+    Kerala: {
+      "Alathur": ["Alathur", "Kuzhalmannam", "Kannambra"],
+      "Kottayam": ["Kottayam", "Kumarakom", "Pallom"],
+    },
+    "Andhra Pradesh": {
+      "Guntur": ["Guntur", "Ponnur", "Tenali"],
+      "Tirupati": ["Tirupati", "Renigunta", "Chandragiri"],
+    },
+    Telangana: {
+      "Hyderabad": ["Hyderabad", "Shamshabad", "Rajendranagar"],
+      "Warangal": ["Warangal", "Hanamkonda", "Kazipet"],
+    },
+    Maharashtra: {
+      "Pune": ["Pune", "Haveli", "Mulshi"],
+      "Nashik": ["Nashik", "Dindori", "Sinnar"],
+    },
+    Goa: {
+      "Tiswadi": ["Panaji", "Ribandar", "Taleigao"],
+      "Salcete": ["Margao", "Navelim", "Colva"],
+    },
+  },
+};
+
+const countries = Object.keys(locationData);
+const states = (country) => Object.keys(locationData[country] || {});
+const taluks = (country, state) => Object.keys(locationData[country]?.[state] || {});
+const villages = (country, state, taluk) => locationData[country]?.[state]?.[taluk] || [];
+
 const steps = [
   { icon: "👤", title: "Farmer Information", short: "Basic details about you." },
-  { icon: "📍", title: "Farm Location", short: "Used for satellite and weather analysis." },
+  { icon: "📍", title: "Farm Location", short: "Country, state, taluk and village." },
   { icon: "🌱", title: "Crop Information", short: "Tell us what you are growing." },
   { icon: "🧪", title: "Soil Information", short: "Use your soil test or location estimate." },
   { icon: "🚜", title: "Farming Information", short: "Context for better recommendations." },
 ];
 
 function App() {
-  const [form, setForm] = useState({ ...initialForm, farmerName: "Ravi", latitude: "12.5218", longitude: "76.8951", crop: "Tomato", area: "2.5", cropAge: "35" });
+  const [form, setForm] = useState({ ...initialForm, farmerName: "Ravi", crop: "Tomato", area: "2.5", cropAge: "35" });
   const [response, setResponse] = useState(null);
   const [soilResult, setSoilResult] = useState(null);
   const [weatherData, setWeatherData] = useState(null);
@@ -60,6 +107,30 @@ function App() {
     setAnalysisDone(false);
   };
 
+  const changeCountry = (value) => {
+    const nextStates = states(value);
+    const nextState = nextStates[0] || "";
+    const nextTaluks = taluks(value, nextState);
+    const nextTaluk = nextTaluks[0] || "";
+    const nextVillages = villages(value, nextState, nextTaluk);
+    setForm((current) => ({ ...current, country: value, state: nextState, taluk: nextTaluk, village: nextVillages[0] || "" }));
+    setAnalysisDone(false);
+  };
+
+  const changeState = (value) => {
+    const nextTaluks = taluks(form.country, value);
+    const nextTaluk = nextTaluks[0] || "";
+    const nextVillages = villages(form.country, value, nextTaluk);
+    setForm((current) => ({ ...current, state: value, taluk: nextTaluk, village: nextVillages[0] || "" }));
+    setAnalysisDone(false);
+  };
+
+  const changeTaluk = (value) => {
+    const nextVillages = villages(form.country, form.state, value);
+    setForm((current) => ({ ...current, taluk: value, village: nextVillages[0] || "" }));
+    setAnalysisDone(false);
+  };
+
   const useCurrentLocation = () => {
     if (!navigator.geolocation) {
       setMessage("Geolocation is not supported by this browser. Enter coordinates manually.");
@@ -72,7 +143,7 @@ function App() {
         update("latitude", position.coords.latitude.toFixed(6));
         update("longitude", position.coords.longitude.toFixed(6));
         setLocationLoading(false);
-        setMessage("Current farm location captured successfully.");
+        setMessage("Current farm location captured successfully. Select the matching administrative location above.");
       },
       () => {
         setLocationLoading(false);
@@ -262,7 +333,7 @@ function App() {
           <section className="farm-workspace" id="farm-form">
             <div className="step-rail" aria-label="Farm information steps">
               {steps.map((step, index) => {
-                const completed = analysisDone || (index === 0 && form.farmerName) || (index === 1 && form.latitude && form.longitude) || (index === 2 && form.crop) || (index === 3 && form.soilSource) || (index === 4 && (form.irrigation || form.cropStage));
+                const completed = analysisDone || (index === 0 && form.farmerName) || (index === 1 && form.country && form.state && form.taluk && form.village) || (index === 2 && form.crop) || (index === 3 && form.soilSource) || (index === 4 && (form.irrigation || form.cropStage));
                 return (
                   <div className={`step-item ${completed ? "completed" : ""}`} key={step.title}>
                     <div className="step-number">{completed ? "✓" : index + 1}</div>
@@ -286,12 +357,18 @@ function App() {
               </div>
 
               <div className="form-block">
-                <div className="block-label"><span>2</span><div><strong>Farm Location</strong><small>Location is used for satellite and weather analysis.</small></div></div>
+                <div className="block-label"><span>2</span><div><strong>Farm Location</strong><small>Select your administrative location and provide coordinates for satellite and weather analysis.</small></div></div>
                 <div className="fields location-fields">
+                  <div className="location-selects">
+                    <Field label="Country" icon="🌍"><select value={form.country} onChange={(e) => changeCountry(e.target.value)}><option value="">Select country</option>{countries.map((country) => <option key={country} value={country}>{country}</option>)}</select></Field>
+                    <Field label="State" icon="🏛️"><select value={form.state} onChange={(e) => changeState(e.target.value)} disabled={!form.country}><option value="">Select state</option>{states(form.country).map((state) => <option key={state} value={state}>{state}</option>)}</select></Field>
+                    <Field label="Taluk / Tehsil" icon="📌"><select value={form.taluk} onChange={(e) => changeTaluk(e.target.value)} disabled={!form.state}><option value="">Select taluk</option>{taluks(form.country, form.state).map((taluk) => <option key={taluk} value={taluk}>{taluk}</option>)}</select></Field>
+                    <Field label="Village / Locality" icon="🏘️"><select value={form.village} onChange={(e) => update("village", e.target.value)} disabled={!form.taluk}><option value="">Select village</option>{villages(form.country, form.state, form.taluk).map((village) => <option key={village} value={village}>{village}</option>)}</select></Field>
+                  </div>
                   <div className="location-row"><button type="button" className="location-button" onClick={useCurrentLocation} disabled={locationLoading}>{locationLoading ? "⌛ Locating..." : "📍 Use My Current Location"}</button><span className="location-readout">{locationText}</span></div>
                   <Field label="Latitude" icon="⌖"><input type="number" step="any" value={form.latitude} onChange={(e) => update("latitude", e.target.value)} placeholder="e.g. 12.5218" /></Field>
                   <Field label="Longitude" icon="🧭"><input type="number" step="any" value={form.longitude} onChange={(e) => update("longitude", e.target.value)} placeholder="e.g. 76.8951" /></Field>
-                  <small className="helper-text">You can also enter coordinates manually.</small>
+                  <small className="helper-text">Administrative location helps identify the farm area. Latitude and longitude remain the coordinates used for satellite and weather analysis.</small>
                 </div>
               </div>
 
