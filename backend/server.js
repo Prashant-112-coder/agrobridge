@@ -99,6 +99,95 @@ function startServer() {
   });
 
   // ==========================================================
+  // HISTORICAL FARM HEALTH - SENTINEL-2 NDVI TIMELINE
+  // Returns real observations closest to requested dates.
+  // ==========================================================
+  app.post("/api/farm/history", (req, res) => {
+    const { latitude, longitude, days = [0, 7, 14, 30] } = req.body;
+    console.log("Historical NDVI request:", { latitude, longitude, days });
+
+    if (!latitude || !longitude) {
+      return res.status(400).json({ success: false, message: "Latitude and longitude are required." });
+    }
+
+    const requestedDays = Array.isArray(days)
+      ? days.map(Number).filter((day) => Number.isFinite(day) && day >= 0 && day <= 365).slice(0, 12)
+      : [0, 7, 14, 30];
+
+    if (!requestedDays.length) {
+      return res.status(400).json({ success: false, message: "At least one valid history day is required." });
+    }
+
+    try {
+      const farm = ee.Geometry.Point([Number(longitude), Number(latitude)]);
+      const now = new Date();
+      const endDate = now.toISOString().slice(0, 10);
+      const startDateObj = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+      const startDate = startDateObj.toISOString().slice(0, 10);
+
+      const collection = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+        .filterBounds(farm)
+        .filterDate(startDate, endDate)
+        .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 20));
+
+      const jobs = requestedDays.map((daysAgo) => {
+        const target = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+        const targetDate = target.toISOString().slice(0, 10);
+        const windowStart = new Date(target.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+        const windowEnd = new Date(target.getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+        const image = collection
+          .filterDate(windowStart, windowEnd)
+          .map((item) => item.set("dateDiff", ee.Number(item.get("system:time_start")).subtract(target.getTime()).abs()))
+          .sort("dateDiff")
+          .first();
+
+        const ndvi = ee.Image(image).normalizedDifference(["B8", "B4"]).rename("NDVI");
+        const result = ndvi.reduceRegion({
+          reducer: ee.Reducer.mean(),
+          geometry: farm.buffer(500),
+          scale: 10,
+          maxPixels: 1e9
+        });
+
+        return ee.Dictionary({
+          requestedDate: targetDate,
+          daysAgo,
+          observedDate: ee.Date(image.get("system:time_start")).format("YYYY-MM-dd"),
+          ndvi: result.get("NDVI"),
+          cloudPercentage: image.get("CLOUDY_PIXEL_PERCENTAGE")
+        });
+      });
+
+      ee.List(jobs).evaluate((data, error) => {
+        if (error) {
+          console.error("Historical NDVI calculation failed:", error);
+          return res.status(500).json({ success: false, message: "Historical NDVI calculation failed." });
+        }
+
+        const observations = (data || []).map((item) => ({
+          requestedDate: item.requestedDate,
+          observedDate: item.observedDate || null,
+          daysAgo: Number(item.daysAgo),
+          ndvi: item.ndvi === null || item.ndvi === undefined ? null : Number(item.ndvi),
+          cloudPercentage: item.cloudPercentage === null || item.cloudPercentage === undefined ? null : Number(item.cloudPercentage)
+        }));
+
+        res.json({
+          success: true,
+          source: "Sentinel-2 SR Harmonized via Google Earth Engine",
+          location: { latitude: Number(latitude), longitude: Number(longitude) },
+          radiusMeters: 500,
+          observations
+        });
+      });
+    } catch (error) {
+      console.error("Historical NDVI error:", error);
+      res.status(500).json({ success: false, message: "Historical farm data unavailable." });
+    }
+  });
+
+  // ==========================================================
   // SOIL INTELLIGENCE
   // ==========================================================
   app.post("/api/soil", (req, res) => {
