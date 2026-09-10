@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const API_BASE = "https://agrobridge-backend-gjbk.onrender.com";
 
@@ -21,6 +21,7 @@ export default function DecisionRadar({ form, response, soilResult, weatherData 
   }), [form, response, soilResult, weatherData]);
 
   const analyzeDecision = async () => {
+    if (!response || !weatherData || !soilResult) return;
     setLoading(true);
     setError("");
     try {
@@ -33,13 +34,23 @@ export default function DecisionRadar({ form, response, soilResult, weatherData 
       if (!res.ok || data.success === false) throw new Error(data.message || "Decision analysis failed");
       setDecision(data);
     } catch (err) {
-      setError(err.message);
+      setDecision(null);
+      setError(err.message || "Decision analysis failed");
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (!response || !weatherData || !soilResult) {
+      setDecision(null);
+      return;
+    }
+    analyzeDecision();
+  }, [response, weatherData, soilResult, form?.crop, form?.cropStage, form?.irrigation]);
+
   const levelClass = decision?.risk?.level?.toLowerCase().replaceAll(" ", "-") || "idle";
+  const hasInputs = Boolean(response && weatherData && soilResult);
 
   return (
     <section className="decision-radar" id="farm-risk-radar">
@@ -60,7 +71,7 @@ export default function DecisionRadar({ form, response, soilResult, weatherData 
           </div>
           <div className="decision-score-copy">
             <span>Current farm risk</span>
-            <strong>{decision?.risk?.level || "Run analysis"}</strong>
+            <strong>{loading ? "Analyzing..." : decision?.risk?.level || "Awaiting analysis"}</strong>
             <small>{decision?.crop || form?.crop || "Crop not selected"} · {decision?.cropStage || form?.cropStage || "Stage not selected"}</small>
           </div>
         </div>
@@ -72,21 +83,21 @@ export default function DecisionRadar({ form, response, soilResult, weatherData 
               <span className={`signal-level ${risk.level.toLowerCase()}`}>{risk.level}</span>
               <div><strong>{risk.signal}</strong><small>{risk.reason}</small></div>
             </div>
-          )) : <div className="empty-signal">Run the radar after farm analysis to see the real contributing signals.</div>}
+          )) : <div className="empty-signal">{loading ? "Combining the latest farm measurements..." : hasInputs ? "No elevated risk signals were detected by the current rules." : "Run farm analysis first to unlock the real contributing signals."}</div>}
         </div>
       </div>
 
       <div className="decision-actions">
-        <div className="actions-heading"><div><span>🎯</span><div><strong>What should I do?</strong><small>Prioritized actions based on the available live signals.</small></div></div><button type="button" onClick={analyzeDecision} disabled={loading}>{loading ? "Analyzing..." : "Run Risk Radar →"}</button></div>
+        <div className="actions-heading"><div><span>🎯</span><div><strong>What should I do?</strong><small>Prioritized actions based on the available live signals.</small></div></div><button type="button" onClick={analyzeDecision} disabled={loading || !hasInputs}>{loading ? "Analyzing..." : "Refresh Risk Radar →"}</button></div>
         {decision?.actions?.length ? decision.actions.map((action) => (
           <div className="action-row" key={`${action.priority}-${action.title}`}>
             <span>{action.priority}</span><div><strong>{action.title}</strong><p>{action.detail}</p></div>
           </div>
-        )) : <div className="action-placeholder">No recommendation is shown until the decision engine receives your latest farm measurements.</div>}
+        )) : <div className="action-placeholder">{loading ? "Generating prioritized actions..." : "Recommendations will appear here after live farm analysis."}</div>}
       </div>
 
       {decision?.summary && <div className="decision-summary">💡 <span>{decision.summary}</span></div>}
-      {error && <div className="decision-error">⚠️ {error}</div>}
+      {error && <div className="decision-error">⚠️ {error} <button type="button" onClick={analyzeDecision} disabled={loading || !hasInputs}>Retry</button></div>}
     </section>
   );
 }
