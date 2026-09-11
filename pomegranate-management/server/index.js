@@ -1,0 +1,13 @@
+import express from 'express';
+import cors from 'cors';
+import {diseases,pests,dashboard} from './data.js';
+const app=express(); app.use(cors()); app.use(express.json({limit:'10mb'}));
+app.get('/api/health',(req,res)=>res.json({ok:true,service:'pomegranate-management',time:new Date().toISOString()}));
+app.get('/api/dashboard',(req,res)=>res.json(dashboard));
+app.get('/api/diseases',(req,res)=>{const q=(req.query.q||'').toLowerCase();res.json(diseases.filter(d=>(d.name+' '+d.type+' '+d.symptoms.join(' ')).toLowerCase().includes(q)))});
+app.get('/api/diseases/:id',(req,res)=>{const d=diseases.find(x=>x.id===req.params.id); d?res.json(d):res.status(404).json({error:'Disease not found'})});
+app.get('/api/pests',(req,res)=>res.json(pests));
+app.post('/api/scouting',(req,res)=>res.status(201).json({id:crypto.randomUUID(),...req.body,createdAt:new Date().toISOString(),status:'recorded'}));
+app.post('/api/diagnosis',(req,res)=>res.status(202).json({status:'queued',message:'Image received for diagnosis pipeline. Connect a validated crop-specific model before using predictions for decisions.'}));
+app.use((req,res)=>res.status(404).json({error:'Route not found'}));
+const port=process.env.PORT||4000;app.listen(port,()=>console.log(`PomegranateOS API running on http://localhost:${port}`));
