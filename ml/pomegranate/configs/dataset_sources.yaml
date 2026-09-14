@@ -1,0 +1,10 @@
+fruit_v1:
+  primary:
+    name: pomegranate-fruit-diseases
+    kaggle: sujaykapadnis/pomegranate-fruit-diseases-dataset
+    purpose: primary-fruit-classifier
+  secondary:
+    name: halabja-pomegranate-dataset
+    source: zenodo
+    purpose: domain-expansion-and-validation
+  policy: verify_dataset_license_before_commercial_training
