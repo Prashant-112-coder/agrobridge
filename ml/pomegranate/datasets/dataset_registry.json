@@ -1,0 +1,27 @@
+{
+  "datasets": [
+    {
+      "id": "mendeley-fruit-v1",
+      "organ": "fruit",
+      "source": "https://data.mendeley.com/datasets/b6s2rkpmvh/1",
+      "original_images": 5099,
+      "license": "CC BY 4.0",
+      "status": "approved_candidate"
+    },
+    {
+      "id": "halabja-fruit-v1",
+      "organ": "fruit",
+      "source": "https://zenodo.org/records/15856012",
+      "original_images": 2178,
+      "license": "CC BY 4.0",
+      "status": "approved_candidate"
+    },
+    {
+      "id": "time-series-weather-v1",
+      "organ": "fruit",
+      "source": "https://data.mendeley.com/datasets/8mcz3w2wxd/1",
+      "license": "CC BY 4.0",
+      "status": "context_candidate"
+    }
+  ]
+}
