@@ -1,0 +1,37 @@
+{
+  "version": "0.1.0",
+  "scope": "pomegranate",
+  "organs": {
+    "fruit": [
+      "healthy",
+      "bacterial_blight",
+      "anthracnose",
+      "cercospora_fruit_spot",
+      "alternaria_fruit_spot",
+      "sunburn",
+      "colletotrichum",
+      "ectomelois_ceratoniae",
+      "unknown"
+    ],
+    "leaf": [
+      "healthy",
+      "bacterial_blight",
+      "anthracnose",
+      "alternaria",
+      "cercospora_leaf_spot",
+      "pest_damage",
+      "unknown"
+    ],
+    "root": [
+      "possible_wilt",
+      "possible_root_knot",
+      "unknown"
+    ],
+    "pest": [
+      "fruit_borer",
+      "aphids",
+      "leaf_cutting_bee_damage",
+      "unknown"
+    ]
+  }
+}
