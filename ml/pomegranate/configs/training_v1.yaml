@@ -1,0 +1,47 @@
+model:
+  name: efficientnet_b0
+  pretrained: true
+  num_classes: 5
+  input_size: 224
+
+classes:
+  - Healthy
+  - Anthracnose
+  - Bacterial_Blight
+  - Alternaria
+  - Cercospora
+
+data:
+  train_size: 3569
+  validation_size: 765
+  test_size: 765
+  source: sujaykapadnis/pomegranate-fruit-diseases-dataset
+  split_strategy: stratified_random
+
+training:
+  batch_size: 32
+  epochs: 15
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  optimizer: AdamW
+  scheduler: cosine
+  early_stopping_patience: 4
+  seed: 42
+
+augmentation:
+  horizontal_flip: true
+  vertical_flip: false
+  rotation_degrees: 15
+  color_jitter: true
+  random_resized_crop: true
+
+quality_gate:
+  min_macro_f1: 0.85
+  min_test_accuracy: 0.85
+  max_class_recall_gap: 0.20
+  require_confusion_matrix_review: true
+  require_unknown_rejection_check: true
+
+runtime:
+  target: kaggle_gpu
+  local_training_allowed: false
