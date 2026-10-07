@@ -304,10 +304,10 @@ function startServer() {
 
     if (values.ndvi !== null) {
       if (values.ndvi < profile.ndvi.low) {
-        risks.push({ type: "vegetation", level: "HIGH", score: 35, signal: `NDVI ${values.ndvi.toFixed(2)} is low`, reason: "Low vegetation index can indicate crop stress or sparse vegetation." });
+        risks.push({ type: "vegetation", level: "HIGH", score: 35, signal: `NDVI ${values.ndvi.toFixed(2)} is low`, reason: "The vegetation signal is below the crop-specific low-signal threshold. NDVI alone cannot identify the cause." });
         actions.push({ priority: 1, title: "Inspect the field soon", detail: "Check representative plants for wilting, uneven growth, irrigation issues or visible stress before changing inputs." });
       } else if (values.ndvi < profile.ndvi.moderate) {
-        risks.push({ type: "vegetation", level: "MODERATE", score: 20, signal: `NDVI ${values.ndvi.toFixed(2)} is below a healthy dense-canopy range`, reason: "Vegetation signal is weaker than expected for a dense crop canopy." });
+        risks.push({ type: "vegetation", level: "MODERATE", score: 20, signal: `NDVI ${values.ndvi.toFixed(2)} is below a healthy dense-canopy range`, reason: "The vegetation signal is below the crop-specific monitoring threshold." });
         actions.push({ priority: 2, title: "Scout weaker patches", detail: "Compare low-growth areas with healthy areas and verify irrigation uniformity." });
       }
     }
@@ -316,8 +316,6 @@ function startServer() {
       if (values.soilPH < profile.soilPH.min || values.soilPH > profile.soilPH.max) {
         risks.push({ type: "soil", level: "HIGH", score: 30, signal: `Soil pH ${values.soilPH.toFixed(1)}`, reason: "The estimated soil pH is outside a broad generally suitable range for many crops." });
         actions.push({ priority: 2, title: "Verify soil pH with a soil test", detail: "Use a recent lab test before applying lime, sulfur or other pH-correction inputs." });
-      } else if (values.soilPH < profile.soilPH.min || values.soilPH > profile.soilPH.max) {
-        risks.push({ type: "soil", level: "MODERATE", score: 12, signal: `Soil pH ${values.soilPH.toFixed(1)}`, reason: "The estimated pH is outside a common neutral-to-slightly-acidic range." });
       }
     }
 
@@ -355,6 +353,7 @@ function startServer() {
       engine: "AGROBRIDGE Explainable Farm Decision Engine v1",
       risk: { score: riskScore, level },
       crop: crop || "Unknown",
+      cropProfile: { name: profile.label, ndvi: profile.ndvi, temperature: profile.temperature, soilPH: profile.soilPH },
       cropStage: cropStage || "Not specified",
       irrigation: irrigation || "Not specified",
       risks: risks.slice(0, 5),
