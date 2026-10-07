@@ -7,6 +7,7 @@ import express from "express";
 import cors from "cors";
 import ee from "@google/earthengine";
 import fs from "fs";
+import { getCropProfile } from "./cropProfiles.js";
 
 const app = express();
 app.use(cors());
@@ -299,31 +300,32 @@ function startServer() {
 
     const risks = [];
     const actions = [];
+    const profile = getCropProfile(crop);
 
     if (values.ndvi !== null) {
-      if (values.ndvi < 0.20) {
+      if (values.ndvi < profile.ndvi.low) {
         risks.push({ type: "vegetation", level: "HIGH", score: 35, signal: `NDVI ${values.ndvi.toFixed(2)} is low`, reason: "Low vegetation index can indicate crop stress or sparse vegetation." });
         actions.push({ priority: 1, title: "Inspect the field soon", detail: "Check representative plants for wilting, uneven growth, irrigation issues or visible stress before changing inputs." });
-      } else if (values.ndvi < 0.40) {
+      } else if (values.ndvi < profile.ndvi.moderate) {
         risks.push({ type: "vegetation", level: "MODERATE", score: 20, signal: `NDVI ${values.ndvi.toFixed(2)} is below a healthy dense-canopy range`, reason: "Vegetation signal is weaker than expected for a dense crop canopy." });
         actions.push({ priority: 2, title: "Scout weaker patches", detail: "Compare low-growth areas with healthy areas and verify irrigation uniformity." });
       }
     }
 
     if (values.soilPH !== null) {
-      if (values.soilPH < 5.5 || values.soilPH > 8.0) {
+      if (values.soilPH < profile.soilPH.min || values.soilPH > profile.soilPH.max) {
         risks.push({ type: "soil", level: "HIGH", score: 30, signal: `Soil pH ${values.soilPH.toFixed(1)}`, reason: "The estimated soil pH is outside a broad generally suitable range for many crops." });
         actions.push({ priority: 2, title: "Verify soil pH with a soil test", detail: "Use a recent lab test before applying lime, sulfur or other pH-correction inputs." });
-      } else if (values.soilPH < 6.0 || values.soilPH > 7.5) {
+      } else if (values.soilPH < profile.soilPH.min || values.soilPH > profile.soilPH.max) {
         risks.push({ type: "soil", level: "MODERATE", score: 12, signal: `Soil pH ${values.soilPH.toFixed(1)}`, reason: "The estimated pH is outside a common neutral-to-slightly-acidic range." });
       }
     }
 
     if (values.temperature !== null) {
-      if (values.temperature >= 35) {
+      if (values.temperature >= profile.temperature.heat) {
         risks.push({ type: "heat", level: "HIGH", score: 25, signal: `${values.temperature.toFixed(1)}°C`, reason: "High temperature increases crop heat and water-stress pressure." });
         actions.push({ priority: 1, title: "Prioritize heat-stress checks", detail: "Check soil moisture and crop wilting during the hottest part of the day; avoid unnecessary field operations at peak heat." });
-      } else if (values.temperature >= 32) {
+      } else if (values.temperature >= profile.temperature.warm) {
         risks.push({ type: "heat", level: "MODERATE", score: 12, signal: `${values.temperature.toFixed(1)}°C`, reason: "Warm conditions can increase evapotranspiration and crop water demand." });
       }
     }
