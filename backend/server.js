@@ -168,7 +168,16 @@ function startServer() {
           .sort("dateDiff");
 
         const hasImage = window.size().gt(0);
-        const image = ee.Image(window.first());
+
+        // Always give the server-side graph a valid image object. When a
+        // historical window has no matching scene, the fallback is masked
+        // and the response is explicitly returned as an unavailable point.
+        const fallbackImage = ee.Image.constant([0, 0, 0])
+          .rename(["B4", "B8", "SCL"])
+          .updateMask(ee.Image.constant(0));
+        const image = ee.Image(
+          ee.Algorithms.If(hasImage, window.first(), fallbackImage)
+        );
 
         // SCL mask removes cloud/shadow/snow classes from the NDVI mean.
         // This keeps the historical signal more robust than relying only
