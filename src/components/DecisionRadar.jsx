@@ -1,3 +1,4 @@
+import DecisionEvidence from "./DecisionEvidence";
 import { useEffect, useMemo, useState } from "react";
 
 const API_BASE = "https://agrobridge-backend-gjbk.onrender.com";
@@ -97,6 +98,7 @@ export default function DecisionRadar({ form, response, soilResult, weatherData 
       </div>
 
       {decision?.summary && <div className="decision-summary">💡 <span>{decision.summary}</span></div>}
+      <DecisionEvidence decision={decision} />
       {error && <div className="decision-error">⚠️ {error} <button type="button" onClick={analyzeDecision} disabled={loading || !hasInputs}>Retry</button></div>}
     </section>
   );
