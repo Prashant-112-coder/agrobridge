@@ -102,17 +102,25 @@ function startServer() {
   // ==========================================================
   // HISTORICAL FARM HEALTH - SENTINEL-2 NDVI TIMELINE
   // Returns real observations closest to requested dates.
+  // Uses a server-side empty-window guard so missing Sentinel-2
+  // scenes never cause the entire history request to fail.
   // ==========================================================
   app.post("/api/farm/history", (req, res) => {
     const { latitude, longitude, days = [0, 7, 14, 30] } = req.body;
     console.log("Historical NDVI request:", { latitude, longitude, days });
 
-    if (!latitude || !longitude) {
-      return res.status(400).json({ success: false, message: "Latitude and longitude are required." });
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      return res.status(400).json({ success: false, message: "Valid latitude and longitude are required." });
     }
 
     const requestedDays = Array.isArray(days)
-      ? days.map(Number).filter((day) => Number.isFinite(day) && day >= 0 && day <= 365).slice(0, 12)
+      ? days
+          .map(Number)
+          .filter((day) => Number.isFinite(day) && day >= 0 && day <= 365)
+          .slice(0, 12)
       : [0, 7, 14, 30];
 
     if (!requestedDays.length) {
@@ -120,71 +128,125 @@ function startServer() {
     }
 
     try {
-      const farm = ee.Geometry.Point([Number(longitude), Number(latitude)]);
+      const farm = ee.Geometry.Point([lng, lat]);
       const now = new Date();
-      const endDate = now.toISOString().slice(0, 10);
-      const startDateObj = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-      const startDate = startDateObj.toISOString().slice(0, 10);
+
+      // Keep the collection window wide enough for the requested 365-day
+      // observation plus the nearest-scene search window.
+      const collectionStart = new Date(
+        now.getTime() - (365 + 7) * 24 * 60 * 60 * 1000
+      ).toISOString().slice(0, 10);
+      const collectionEnd = new Date(
+        now.getTime() + 2 * 24 * 60 * 60 * 1000
+      ).toISOString().slice(0, 10);
 
       const collection = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
         .filterBounds(farm)
-        .filterDate(startDate, endDate)
-        .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 20));
+        .filterDate(collectionStart, collectionEnd)
+        .filter(ee.Filter.lte("CLOUDY_PIXEL_PERCENTAGE", 60));
 
       const jobs = requestedDays.map((daysAgo) => {
         const target = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
         const targetDate = target.toISOString().slice(0, 10);
-        const windowStart = new Date(target.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-        const windowEnd = new Date(target.getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+        const windowStart = new Date(
+          target.getTime() - 7 * 24 * 60 * 60 * 1000
+        ).toISOString().slice(0, 10);
+        const windowEnd = new Date(
+          target.getTime() + 8 * 24 * 60 * 60 * 1000
+        ).toISOString().slice(0, 10);
 
-        const image = collection
+        const window = collection
           .filterDate(windowStart, windowEnd)
-          .map((item) => item.set("dateDiff", ee.Number(item.get("system:time_start")).subtract(target.getTime()).abs()))
-          .sort("dateDiff")
-          .first();
+          .map((item) =>
+            item.set(
+              "dateDiff",
+              ee.Number(item.get("system:time_start"))
+                .subtract(target.getTime())
+                .abs()
+            )
+          )
+          .sort("dateDiff");
 
-        const ndvi = ee.Image(image).normalizedDifference(["B8", "B4"]).rename("NDVI");
+        const hasImage = window.size().gt(0);
+        const image = ee.Image(window.first());
+
+        // SCL mask removes cloud/shadow/snow classes from the NDVI mean.
+        // This keeps the historical signal more robust than relying only
+        // on scene-level CLOUDY_PIXEL_PERCENTAGE.
+        const scl = image.select("SCL");
+        const clearMask = scl
+          .neq(3)   // cloud shadow
+          .and(scl.neq(8))  // cloud medium probability
+          .and(scl.neq(9))  // cloud high probability
+          .and(scl.neq(10)) // cirrus
+          .and(scl.neq(11)); // snow/ice
+
+        const ndvi = image
+          .updateMask(clearMask)
+          .normalizedDifference(["B8", "B4"])
+          .rename("NDVI");
+
         const result = ndvi.reduceRegion({
           reducer: ee.Reducer.mean(),
           geometry: farm.buffer(500),
           scale: 10,
-          maxPixels: 1e9
+          maxPixels: 1e9,
+          bestEffort: true
         });
 
-        return ee.Dictionary({
-          requestedDate: targetDate,
-          daysAgo,
-          observedDate: ee.Date(image.get("system:time_start")).format("YYYY-MM-dd"),
-          ndvi: result.get("NDVI"),
-          cloudPercentage: image.get("CLOUDY_PIXEL_PERCENTAGE")
-        });
+        return ee.Algorithms.If(
+          hasImage,
+          ee.Dictionary({
+            requestedDate: targetDate,
+            daysAgo,
+            observedDate: ee.Date(image.get("system:time_start")).format("YYYY-MM-dd"),
+            ndvi: result.get("NDVI"),
+            cloudPercentage: image.get("CLOUDY_PIXEL_PERCENTAGE")
+          }),
+          ee.Dictionary({
+            requestedDate: targetDate,
+            daysAgo,
+            observedDate: null,
+            ndvi: null,
+            cloudPercentage: null
+          })
+        );
       });
 
       ee.List(jobs).evaluate((data, error) => {
         if (error) {
           console.error("Historical NDVI calculation failed:", error);
-          return res.status(500).json({ success: false, message: "Historical NDVI calculation failed." });
+          return res.status(500).json({
+            success: false,
+            message: "Historical NDVI calculation failed."
+          });
         }
 
         const observations = (data || []).map((item) => ({
-          requestedDate: item.requestedDate,
-          observedDate: item.observedDate || null,
-          daysAgo: Number(item.daysAgo),
-          ndvi: item.ndvi === null || item.ndvi === undefined ? null : Number(item.ndvi),
-          cloudPercentage: item.cloudPercentage === null || item.cloudPercentage === undefined ? null : Number(item.cloudPercentage)
+          requestedDate: item?.requestedDate || null,
+          observedDate: item?.observedDate || null,
+          daysAgo: Number(item?.daysAgo),
+          ndvi: item?.ndvi === null || item?.ndvi === undefined ? null : Number(item.ndvi),
+          cloudPercentage:
+            item?.cloudPercentage === null || item?.cloudPercentage === undefined
+              ? null
+              : Number(item.cloudPercentage)
         }));
 
         res.json({
           success: true,
           source: "Sentinel-2 SR Harmonized via Google Earth Engine",
-          location: { latitude: Number(latitude), longitude: Number(longitude) },
+          location: { latitude: lat, longitude: lng },
           radiusMeters: 500,
           observations
         });
       });
     } catch (error) {
       console.error("Historical NDVI error:", error);
-      res.status(500).json({ success: false, message: "Historical farm data unavailable." });
+      res.status(500).json({
+        success: false,
+        message: "Historical farm data unavailable."
+      });
     }
   });
 
