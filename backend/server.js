@@ -59,12 +59,15 @@ function startServer() {
     const { latitude, longitude, crop } = req.body;
     console.log("Farm received:", { latitude, longitude, crop });
 
-    if (!latitude || !longitude) {
-      return res.status(400).json({ success: false, message: "Latitude and longitude are required." });
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+
+    if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) {
+      return res.status(400).json({ success: false, message: "Valid latitude and longitude are required." });
     }
 
     try {
-      const farm = ee.Geometry.Point([Number(longitude), Number(latitude)]);
+      const farm = ee.Geometry.Point([lng, lat]);
       const images = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
         .filterBounds(farm)
         .filterDate("2025-01-01", "2026-08-19")
@@ -89,7 +92,7 @@ function startServer() {
         console.log("NDVI:", ndviValue);
         res.json({
           success: true,
-          farm: { latitude: Number(latitude), longitude: Number(longitude), crop: crop || "Unknown" },
+          farm: { latitude: lat, longitude: lng, crop: crop || "Unknown" },
           satellite: { ndvi: ndviValue }
         });
       });
