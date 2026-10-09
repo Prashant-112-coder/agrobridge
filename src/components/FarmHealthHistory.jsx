@@ -122,6 +122,13 @@ export default function FarmHealthHistory({ latitude, longitude, analysisDone })
         <div className="history-error">⚠️ {error} <button type="button" onClick={loadHistory}>Retry</button></div>
       )}
 
+      {analysisDone && !loading && !error && !chart && (
+        <div className="history-empty">
+          🛰️ No usable Sentinel-2 observation was available in the requested windows.
+          <button type="button" onClick={loadHistory}>Retry</button>
+        </div>
+      )}
+
       {analysisDone && !loading && !error && chart && (
         <>
           <div className="history-summary">
