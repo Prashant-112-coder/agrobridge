@@ -82,9 +82,17 @@ function startServer() {
 
     try {
       const farm = ee.Geometry.Point([lng, lat]);
+      const latestDate = new Date();
+      const latestEndDate = new Date(latestDate.getTime() + 2 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .slice(0, 10);
+      const historyStartDate = new Date(latestDate.getTime() - 365 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .slice(0, 10);
+
       const images = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
         .filterBounds(farm)
-        .filterDate("2025-01-01", "2026-08-19")
+        .filterDate(historyStartDate, latestEndDate)
         .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 20))
         .sort("system:time_start", false);
 
