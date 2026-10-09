@@ -1,6 +1,7 @@
 // ============================================================
 // AGROBRIDGE AI - BACKEND SERVER
-// Handles farm analysis, satellite NDVI, soil, weather and decisions
+// Handles farm analysis, satellite NDVI, soil, weather, decisions
+// and pomegranate disease detection
 // ============================================================
 
 import express from "express";
@@ -8,6 +9,9 @@ import cors from "cors";
 import ee from "@google/earthengine";
 import fs from "fs";
 import { getCropProfile } from "./cropProfiles.js";
+import { getDiseaseInfo, DISEASE_KNOWLEDGE } from "./diseaseKnowledge.js";
+
+const ML_SERVICE_URL = process.env.ML_SERVICE_URL || "http://localhost:8080";
 
 const app = express();
 app.use(cors());
@@ -485,6 +489,135 @@ function startServer() {
           ? "Some signals deserve closer monitoring. Use the recommended checks before changing inputs."
           : "No major rule-based risk signal was detected from the supplied live measurements. Continue routine monitoring."
     });
+  });
+
+  // ==========================================================
+  // POMEGRANATE DISEASE DETECTION
+  // Proxies to the ML serving layer or returns demo predictions
+  // when the ML server is unavailable for development.
+  // ==========================================================
+
+  // Increase body size limit for image uploads (base64)
+  app.use("/api/disease", express.json({ limit: "12mb" }));
+
+  app.post("/api/disease/detect", async (req, res) => {
+    const { image } = req.body;
+
+    if (!image) {
+      return res.status(400).json({
+        success: false,
+        message: "An image is required. Send a base64-encoded image in the 'image' field."
+      });
+    }
+
+    // Extract base64 data (strip data URL prefix if present)
+    const base64Match = image.match(/^data:image\/\w+;base64,(.+)$/);
+    const base64Data = base64Match ? base64Match[1] : image;
+
+    let imageBuffer;
+    try {
+      imageBuffer = Buffer.from(base64Data, "base64");
+    } catch {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid base64 image data."
+      });
+    }
+
+    if (imageBuffer.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Empty image data."
+      });
+    }
+
+    if (imageBuffer.length > 10 * 1024 * 1024) {
+      return res.status(400).json({
+        success: false,
+        message: "Image too large. Maximum size is 10 MB."
+      });
+    }
+
+    // Try the ML serving layer first
+    try {
+      const formData = new FormData();
+      formData.append("file", new Blob([imageBuffer], { type: "image/jpeg" }), "upload.jpg");
+
+      const mlResponse = await fetch(`${ML_SERVICE_URL}/predict`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (mlResponse.ok) {
+        const mlData = await mlResponse.json();
+        // Attach treatment recommendations
+        const treatmentLabel = mlData.prediction?.label || "Unknown";
+        const knowledge = getDiseaseInfo(treatmentLabel);
+        return res.json({
+          success: true,
+          source: "ml_model",
+          ...mlData,
+          treatment: knowledge,
+        });
+      }
+    } catch {
+      console.log("ML service unavailable, using demo prediction mode.");
+    }
+
+    // Fallback: Demo prediction mode when ML server is not running
+    // This allows the frontend to be fully developed and tested
+    // without requiring a running ML model
+    const demoClasses = ["Healthy", "Anthracnose", "Bacterial_Blight", "Alternaria", "Cercospora"];
+    const demoIndex = Math.floor(Math.random() * demoClasses.length);
+    const demoLabel = demoClasses[demoIndex];
+    const demoConfidence = 0.65 + Math.random() * 0.30; // 0.65-0.95
+
+    const demoAlternatives = demoClasses
+      .filter((_, i) => i !== demoIndex)
+      .map((label) => ({
+        label,
+        confidence: Math.round(Math.random() * 0.2 * 10000) / 10000,
+      }))
+      .sort((a, b) => b.confidence - a.confidence)
+      .slice(0, 3);
+
+    const knowledge = getDiseaseInfo(demoLabel);
+
+    res.json({
+      success: true,
+      source: "demo_mode",
+      model_version: "pomegranate-fruit-v1-demo",
+      organ: "fruit",
+      prediction: {
+        label: demoLabel,
+        confidence: Math.round(demoConfidence * 10000) / 10000,
+        status: demoConfidence >= 0.55 ? "possible" : "needs_review",
+      },
+      alternatives: demoAlternatives,
+      image_quality: { status: "acceptable" },
+      treatment: knowledge,
+      _notice: "This is a demo prediction. Deploy the trained ML model for real inference.",
+    });
+  });
+
+  // Disease information endpoint
+  app.get("/api/disease/info/:label", (req, res) => {
+    const { label } = req.params;
+    const info = getDiseaseInfo(label);
+    res.json({ success: true, label, ...info });
+  });
+
+  // Available disease classes
+  app.get("/api/disease/classes", (req, res) => {
+    const classes = Object.entries(DISEASE_KNOWLEDGE)
+      .filter(([key]) => key !== "Unknown")
+      .map(([key, value]) => ({
+        label: key,
+        displayName: value.displayName,
+        severity: value.severity,
+        icon: value.icon,
+      }));
+    res.json({ success: true, classes });
   });
 
   app.listen(PORT, () => {

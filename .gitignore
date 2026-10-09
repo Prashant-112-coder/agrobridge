@@ -16,3 +16,12 @@ build/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Python & ML
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+ml/pomegranate/models/*.pth
+saved_models/
+pomegranate_prepared/

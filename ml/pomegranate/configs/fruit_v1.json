@@ -1,10 +1,18 @@
 {
   "model": "efficientnet_b0",
+  "contract_version": "pomegranate-fruit-v1",
   "image_size": 224,
   "batch_size": 32,
   "epochs": 15,
   "learning_rate": 0.0001,
   "seed": 42,
-  "num_classes": 9,
+  "num_classes": 5,
+  "classes": [
+    "Healthy",
+    "Anthracnose",
+    "Bacterial_Blight",
+    "Alternaria",
+    "Cercospora"
+  ],
   "unknown_threshold": 0.55
 }
