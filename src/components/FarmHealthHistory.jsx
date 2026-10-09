@@ -21,6 +21,7 @@ function trendLabel(change) {
 
 export default function FarmHealthHistory({ latitude, longitude, analysisDone }) {
   const [observations, setObservations] = useState([]);
+  const [availableCount, setAvailableCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -32,15 +33,27 @@ export default function FarmHealthHistory({ latitude, longitude, analysisDone })
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(`${API_BASE}/api/farm/history`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ latitude: lat, longitude: lng, days: DAYS })
-      });
-      const data = await response.json();
-      if (!response.ok || data.success === false) {
-        throw new Error(data.message || "Farm history is unavailable.");
+      let data;
+      let lastError;
+      for (let attempt = 1; attempt <= 2; attempt += 1) {
+        try {
+          const response = await fetch(`${API_BASE}/api/farm/history`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ latitude: lat, longitude: lng, days: DAYS })
+          });
+          data = await response.json();
+          if (!response.ok || data.success === false) {
+            throw new Error(data.message || "Farm history is unavailable.");
+          }
+          break;
+        } catch (err) {
+          lastError = err;
+          if (attempt < 2) await new Promise((resolve) => setTimeout(resolve, 1200));
+        }
       }
+      if (!data) throw lastError || new Error("Farm history is unavailable.");
+      setAvailableCount(Number(data.availableObservations) || 0);
       setObservations((data.observations || []).filter((item) => Number.isFinite(Number(item.ndvi))));
     } catch (err) {
       setObservations([]);
@@ -114,7 +127,7 @@ export default function FarmHealthHistory({ latitude, longitude, analysisDone })
           <div className="history-summary">
             <div><span>Latest NDVI</span><strong>{Number(latest.ndvi).toFixed(2)}</strong><small>{formatDate(latest.observedDate)}</small></div>
             <div><span>Change vs oldest</span><strong className={change >= 0.05 ? "positive" : change <= -0.05 ? "negative" : ""}>{change >= 0 ? "+" : ""}{change.toFixed(2)}</strong><small>{trendLabel(change)}</small></div>
-            <div><span>Observations</span><strong>{observations.length}</strong><small>within requested timeline</small></div>
+            <div><span>Observations</span><strong>{observations.length}</strong><small>{availableCount ? `${availableCount} of ${DAYS.length} dates available` : "within requested timeline"}</small></div>
           </div>
 
           <div className="history-chart-card">
