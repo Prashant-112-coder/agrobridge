@@ -48,3 +48,5 @@
   .history-observations { grid-template-columns:1fr; }
   .history-head h2 { font-size:20px; }
 }
+
+.history-empty button { margin-left:8px; border:0; background:transparent; color:#2d7a43; font-weight:800; cursor:pointer; }
