@@ -269,12 +269,15 @@ function startServer() {
     const { latitude, longitude } = req.body;
     console.log("Soil request:", { latitude, longitude });
 
-    if (!latitude || !longitude) {
-      return res.status(400).json({ success: false, message: "Latitude and longitude are required." });
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+
+    if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) {
+      return res.status(400).json({ success: false, message: "Valid latitude and longitude are required." });
     }
 
     try {
-      const location = ee.Geometry.Point([Number(longitude), Number(latitude)]);
+      const location = ee.Geometry.Point([lng, lat]);
       const phImage = ee.Image("OpenLandMap/SOL/SOL_PH-H2O_USDA-4C1A2A_M/v02").select("b0");
       const carbonImage = ee.Image("OpenLandMap/SOL/SOL_ORGANIC-CARBON_USDA-6A1C_M/v02").select("b0");
       const soilImage = phImage.addBands(carbonImage);
@@ -300,7 +303,7 @@ function startServer() {
         res.json({
           success: true,
           source: { type: "location_based_estimate", dataset: "OpenLandMap", resolution: "250m" },
-          location: { latitude: Number(latitude), longitude: Number(longitude) },
+          location: { latitude: lat, longitude: lng },
           soil: { ph: estimatedPH, organicCarbon_g_per_kg: estimatedOrganicCarbon }
         });
       });
