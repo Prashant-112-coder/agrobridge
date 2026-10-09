@@ -259,11 +259,15 @@ function startServer() {
               : Number(item.cloudPercentage)
         }));
 
+        const availableCount = observations.filter((item) => Number.isFinite(item.ndvi)).length;
+
         res.json({
           success: true,
           source: "Sentinel-2 SR Harmonized via Google Earth Engine",
           location: { latitude: lat, longitude: lng },
           radiusMeters: 500,
+          requestedDays: requestedDays.length,
+          availableObservations: availableCount,
           observations
         });
       });
