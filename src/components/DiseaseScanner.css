@@ -27,3 +27,14 @@
 .alternatives-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.alt-chip{padding:6px 12px;border-radius:8px;background:#f7faf8;border:1px solid #e3eee5;font-size:10px;color:#4a5e50}.alt-chip strong{color:#1e4a2b;margin-right:4px}
 .disease-disclaimer{margin-top:16px;padding:12px 15px;border-radius:10px;background:#f7faf8;border:1px solid #e3eee5;color:#5b6e62;font-size:10.5px;line-height:1.55}
 @media(max-width:760px){.disease-head{flex-direction:column}.result-sections{grid-template-columns:1fr}.preview-area{flex-direction:column;align-items:stretch}.preview-img{width:100%;height:200px}.confidence-bar{width:auto;text-align:left}}
+
+.pomegranate-quick-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;margin-bottom:22px;border-radius:18px;background:linear-gradient(135deg,#fff2f2,#fff9f5);border:1.5px solid #fecaca;box-shadow:0 8px 24px rgba(239,68,68,.08);cursor:pointer;transition:all .25s ease}
+.pomegranate-quick-banner:hover{transform:translateY(-2px);border-color:#f87171;box-shadow:0 12px 30px rgba(239,68,68,.14)}
+.pomegranate-banner-content{display:flex;align-items:center;gap:14px}
+.pomegranate-banner-icon{width:46px;height:46px;border-radius:12px;background:#ffe4e4;display:grid;place-items:center;font-size:24px;flex-shrink:0}
+.pomegranate-banner-content strong{display:block;color:#991b1b;font-size:15px;font-family:'Manrope',sans-serif}
+.pomegranate-banner-content span{display:block;color:#7f1d1d;font-size:12px;margin-top:2px;opacity:.85}
+.pomegranate-banner-btn{padding:9px 18px;border-radius:10px;background:#dc2626;color:#fff;font-weight:700;font-size:12px;border:0;cursor:pointer;white-space:nowrap;transition:.2s}
+.pomegranate-banner-btn:hover{background:#b91c1c}
+@media(max-width:640px){.pomegranate-quick-banner{flex-direction:column;align-items:flex-start}.pomegranate-banner-btn{width:100%;text-align:center}}
+
