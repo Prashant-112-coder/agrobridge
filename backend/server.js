@@ -88,21 +88,36 @@ function startServer() {
         .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 20))
         .sort("system:time_start", false);
 
-      const image = images.first();
+      const hasImage = images.size().gt(0);
+      const fallbackImage = ee.Image.constant([0, 0])
+        .rename(["B4", "B8"])
+        .updateMask(ee.Image.constant(0));
+      const image = ee.Image(ee.Algorithms.If(hasImage, images.first(), fallbackImage));
       const ndvi = image.normalizedDifference(["B8", "B4"]).rename("NDVI");
       const result = ndvi.reduceRegion({
         reducer: ee.Reducer.mean(),
         geometry: farm.buffer(500),
         scale: 10,
-        maxPixels: 1e9
+        maxPixels: 1e9,
+        bestEffort: true
       });
 
-      result.evaluate((data, error) => {
+      ee.Dictionary({
+        hasImage,
+        result
+      }).evaluate((payload, error) => {
         if (error) {
           console.error("NDVI calculation failed:", error);
           return res.status(500).json({ success: false, message: "NDVI calculation failed." });
         }
-        const ndviValue = data.NDVI;
+        if (!payload?.hasImage) {
+          return res.status(404).json({
+            success: false,
+            message: "No suitable Sentinel-2 observation was found for this farm location and date range."
+          });
+        }
+
+        const ndviValue = payload?.result?.NDVI ?? null;
         console.log("NDVI:", ndviValue);
         res.json({
           success: true,
