@@ -321,15 +321,18 @@ function startServer() {
     const { latitude, longitude } = req.body;
     console.log("Weather request:", { latitude, longitude });
 
-    if (!latitude || !longitude) {
-      return res.status(400).json({ success: false, message: "Latitude and longitude are required." });
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+
+    if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lng) || lng < -180 || lng > 180) {
+      return res.status(400).json({ success: false, message: "Valid latitude and longitude are required." });
     }
 
     try {
       const weatherUrl =
         `https://api.open-meteo.com/v1/forecast` +
-        `?latitude=${latitude}` +
-        `&longitude=${longitude}` +
+        `?latitude=${lat}` +
+        `&longitude=${lng}` +
         `&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m` +
         `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max` +
         `&forecast_days=3` +
@@ -341,7 +344,7 @@ function startServer() {
 
       res.json({
         success: true,
-        location: { latitude: Number(latitude), longitude: Number(longitude) },
+        location: { latitude: lat, longitude: lng },
         weather: {
           temperature: data.current.temperature_2m,
           humidity: data.current.relative_humidity_2m,
