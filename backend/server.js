@@ -52,6 +52,20 @@ function startServer() {
     res.json({ message: "AGROBRIDGE AI Backend is running" });
   });
 
+  app.get("/api/health", (req, res) => {
+    res.json({
+      success: true,
+      service: "AGROBRIDGE AI Backend",
+      status: "healthy",
+      integrations: {
+        earthEngine: true,
+        sentinel2: true,
+        openLandMap: true,
+        openMeteo: true
+      }
+    });
+  });
+
   // ==========================================================
   // FARM ANALYSIS - SENTINEL-2 + NDVI
   // ==========================================================
