@@ -637,6 +637,98 @@
 }
 
 /* Diagnosis Result Card */
+/* Rejection Card (Out-of-Distribution / Human Portrait / Non-Plant) */
+.ps-rejection-card {
+  margin-top: 16px;
+  border-radius: 18px;
+  border: 1.5px solid #fecaca;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.08);
+  animation: ps-fade-in 0.35s ease;
+}
+.ps-rejection-head {
+  padding: 18px 22px;
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.ps-rejection-icon {
+  font-size: 34px;
+}
+.ps-rejection-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ps-rejection-title-row h3 {
+  margin: 0;
+  font-size: 20px;
+  font-family: 'Manrope', sans-serif;
+  color: #991b1b;
+  font-weight: 800;
+}
+.ps-rejection-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #dc2626;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+.ps-rejection-reason {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #7f1d1d;
+  font-weight: 600;
+}
+.ps-rejection-body {
+  padding: 20px 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  background: #ffffff;
+}
+.ps-rejection-info-box {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+}
+.ps-rejection-info-box strong {
+  display: block;
+  font-size: 13px;
+  color: #991b1b;
+  margin-bottom: 6px;
+}
+.ps-rejection-info-box p {
+  margin: 0;
+  font-size: 12px;
+  color: #4a5568;
+  line-height: 1.5;
+}
+.ps-rejection-guidance-box {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+.ps-rejection-guidance-box strong {
+  display: block;
+  font-size: 13px;
+  color: #166534;
+  margin-bottom: 6px;
+}
+.ps-rejection-guidance-box p {
+  margin: 0;
+  font-size: 12px;
+  color: #1e3a29;
+  line-height: 1.5;
+}
+
 .ps-result-card {
   margin-top: 16px;
   border-radius: 18px;
