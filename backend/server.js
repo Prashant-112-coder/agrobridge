@@ -10,6 +10,7 @@ import ee from "@google/earthengine";
 import fs from "fs";
 import { getCropProfile } from "./cropProfiles.js";
 import { getDiseaseInfo, DISEASE_KNOWLEDGE } from "./diseaseKnowledge.js";
+import { getMandiPrices } from "./mandiData.js";
 
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL || "http://localhost:8080";
 
@@ -618,6 +619,21 @@ function startServer() {
         icon: value.icon,
       }));
     res.json({ success: true, classes });
+  });
+
+  // ==========================================================
+  // APMC MANDI MARKET PRICES & COMMODITY INTELLIGENCE
+  // ==========================================================
+  app.get("/api/mandi", (req, res) => {
+    const { crop, state, district } = req.query;
+    const data = getMandiPrices(crop, state, district);
+    res.json(data);
+  });
+
+  app.post("/api/mandi", (req, res) => {
+    const { crop, state, district } = req.body;
+    const data = getMandiPrices(crop, state, district);
+    res.json(data);
   });
 
   app.listen(PORT, () => {

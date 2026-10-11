@@ -1,0 +1,672 @@
+/* ============================================================
+   FARM ADVISORY REPORT & PRINTABLE PDF DOSSIER STYLES
+   ============================================================ */
+
+.advisory-wrapper {
+  margin-top: 36px;
+  position: relative;
+}
+
+/* Action Toolbar */
+.advisory-toolbar {
+  background: linear-gradient(135deg, #0e2417 0%, #163824 100%);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: 18px;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.doc-icon {
+  font-size: 28px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+
+.toolbar-left strong {
+  display: block;
+  font-size: 17px;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.toolbar-left small {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.print-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+.print-btn:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-1px);
+}
+
+.wa-btn {
+  background: #25d366;
+  color: #062b14;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.wa-btn:hover {
+  background: #20ba59;
+  transform: translateY(-1px);
+}
+
+.copy-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.copy-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.toast-notify {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid #10b981;
+  color: #6ee7b7;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 16px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dossier Card (On-Screen Dark Mode) */
+.advisory-dossier {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 36px;
+  color: #e2e8f0;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.dossier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  border-bottom: 2px solid rgba(52, 211, 153, 0.3);
+  padding-bottom: 24px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.brand-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #34d399;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+
+.dossier-brand h1 {
+  font-size: 24px;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+}
+
+.dossier-sub {
+  color: #94a3b8;
+  font-size: 13px;
+  margin: 0;
+}
+
+.dossier-meta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.meta-box {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-align: right;
+}
+
+.meta-box span {
+  display: block;
+  font-size: 9px;
+  color: #94a3b8;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+}
+
+.meta-box strong {
+  display: block;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.meta-box small {
+  display: block;
+  font-size: 10px;
+  color: #64748b;
+}
+
+.verification-pill {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  color: #34d399;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* Sections */
+.dossier-section {
+  margin-bottom: 28px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.section-header span {
+  background: #10b981;
+  color: #062b14;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.section-header h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 0;
+}
+
+/* Profile Grid */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.profile-item label {
+  display: block;
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+
+.profile-item strong {
+  display: block;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.crop-highlight {
+  color: #34d399 !important;
+}
+
+/* Audit Cards */
+.audit-cards-row {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(3, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .audit-cards-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.audit-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.score-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(15, 23, 42, 0.6));
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+.score-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.score-top span {
+  font-size: 10px;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.status-tag {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.status-tag.good {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.status-tag.moderate {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.status-tag.high-risk {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.score-val {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 10px 0;
+}
+
+.score-val strong {
+  font-size: 38px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.score-val small {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.score-meter {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.meter-bar {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.score-note {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.card-lbl {
+  font-size: 10px;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.6px;
+}
+
+.metric-num {
+  margin: 8px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.metric-num strong {
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.metric-num small {
+  font-size: 11px;
+  color: #34d399;
+}
+
+.metric-desc {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Directives */
+.directives-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.directive-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.directive-icon {
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.directive-text strong {
+  display: block;
+  font-size: 14px;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.directive-text p {
+  margin: 0;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+/* Footer & Seal */
+.dossier-footer {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.seal-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.official-seal {
+  width: 90px;
+  height: 90px;
+  border: 2px dashed #34d399;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #34d399;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 8px;
+  transform: rotate(-5deg);
+}
+
+.official-seal small {
+  font-size: 7px;
+  color: #94a3b8;
+}
+
+.seal-copy strong {
+  display: block;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.seal-copy p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.disclaimer-text {
+  max-width: 450px;
+  font-size: 10px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   HIGH-FIDELITY PRINT / EXPORT TO PDF MEDIA STYLES
+   Optimized specifically for standard A4 document printing
+   ============================================================ */
+@media print {
+  /* Hide interactive web elements */
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 12pt !important;
+  }
+
+  .sidebar,
+  .topbar,
+  .farm-header,
+  .pomegranate-quick-banner,
+  .farm-workspace,
+  .analyze-panel,
+  .notice,
+  .live-farm-map,
+  .advisory-toolbar,
+  .mandi-card,
+  .app-footer,
+  .response-card,
+  .ai-card {
+    display: none !important;
+  }
+
+  .app-shell,
+  .page-area,
+  .main-content {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .advisory-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .advisory-dossier {
+    background: #ffffff !important;
+    color: #1f2937 !important;
+    border: 2px solid #065f46 !important;
+    border-radius: 0 !important;
+    padding: 24px !important;
+    box-shadow: none !important;
+    page-break-after: avoid !important;
+  }
+
+  .dossier-header {
+    border-bottom: 2px solid #065f46 !important;
+  }
+
+  .dossier-brand h1 {
+    color: #065f46 !important;
+    font-size: 20pt !important;
+  }
+
+  .brand-badge {
+    color: #047857 !important;
+  }
+
+  .dossier-sub {
+    color: #4b5563 !important;
+  }
+
+  .meta-box {
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  .meta-box strong {
+    color: #111827 !important;
+  }
+
+  .meta-box span,
+  .meta-box small {
+    color: #6b7280 !important;
+  }
+
+  .verification-pill {
+    background: #ecfdf5 !important;
+    border: 1px solid #059669 !important;
+    color: #065f46 !important;
+  }
+
+  .section-header span {
+    background: #065f46 !important;
+    color: #ffffff !important;
+  }
+
+  .section-header h3 {
+    color: #111827 !important;
+  }
+
+  .profile-grid {
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  .profile-item label {
+    color: #6b7280 !important;
+  }
+
+  .profile-item strong {
+    color: #111827 !important;
+  }
+
+  .crop-highlight {
+    color: #065f46 !important;
+    font-weight: 800 !important;
+  }
+
+  .audit-card {
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  .score-card {
+    background: #ecfdf5 !important;
+    border-color: #059669 !important;
+  }
+
+  .score-val strong {
+    color: #065f46 !important;
+  }
+
+  .metric-num strong {
+    color: #111827 !important;
+  }
+
+  .metric-desc,
+  .score-note {
+    color: #4b5563 !important;
+  }
+
+  .directive-item {
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  .directive-text strong {
+    color: #111827 !important;
+  }
+
+  .directive-text p {
+    color: #374151 !important;
+  }
+
+  .official-seal {
+    border-color: #065f46 !important;
+    color: #065f46 !important;
+  }
+
+  .seal-copy strong {
+    color: #111827 !important;
+  }
+
+  .seal-copy p,
+  .disclaimer-text {
+    color: #4b5563 !important;
+  }
+}

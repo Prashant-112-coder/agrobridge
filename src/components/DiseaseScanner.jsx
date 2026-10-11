@@ -373,6 +373,25 @@ export default function DiseaseScanner({ apiBase = "https://agrobridge-backend-g
   const severityBadge = getSeverityBadge(treatment?.severity);
   const confidencePercent = result?.prediction?.confidence ? Math.round(result.prediction.confidence * 100) : 0;
 
+  const shareDiagnosisWhatsApp = () => {
+    if (!result) return;
+    const label = treatment?.displayName || result.prediction?.label || "Fruit Pathology";
+    const immActs = treatment?.treatment?.immediate?.slice(0, 3).map((a) => `• ${a}`).join("\n") || "• Inspect orchard closely.";
+
+    const msg =
+      `🍎 *AGROBRIDGE AI • POMEGRANATE DISEASE DIAGNOSIS*\n\n` +
+      `🔍 *Detected Condition:* ${label}\n` +
+      `🎯 *AI Confidence:* ${confidencePercent}%\n` +
+      `⚠️ *Severity:* ${severityBadge.label}\n\n` +
+      `⚡ *IMMEDIATE ICAR ACTION PLAN:*\n` +
+      `${immActs}\n\n` +
+      `👨‍🌾 *Expert Guidance:* ${treatment?.whenToConsult || "Consult nearest KVK or horticultural officer."}\n\n` +
+      `_Diagnosed via AGROBRIDGE AI Computer Vision Engine_`;
+
+    const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank");
+  };
+
   return (
     <section className="disease-scanner" id="disease-scanner" aria-label="Pomegranate Disease Diagnostic Scanner">
       <div className="disease-head">
@@ -533,6 +552,23 @@ export default function DiseaseScanner({ apiBase = "https://agrobridge-backend-g
                 </div>
               </div>
             )}
+
+            <div className="diagnosis-action-bar">
+              <button
+                type="button"
+                className="wa-diagnosis-share-btn"
+                onClick={shareDiagnosisWhatsApp}
+              >
+                <span>📲</span> Share Diagnosis via WhatsApp
+              </button>
+              <button
+                type="button"
+                className="print-diagnosis-btn"
+                onClick={() => window.print()}
+              >
+                <span>🖨️</span> Print / Save Diagnosis
+              </button>
+            </div>
 
             <div className="result-sections">
               {treatment?.symptoms && treatment.symptoms.length > 0 && (
