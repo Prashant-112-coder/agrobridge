@@ -53,6 +53,36 @@ export function FarmProvider({ children }) {
   const [analysisDone, setAnalysisDone] = useState(true);
   const [message, setMessage] = useState("");
 
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem("agrobridge_theme");
+      if (saved === "light" || saved === "dark") return saved;
+      if (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        return "dark";
+      }
+      return "light";
+    } catch {
+      return "light";
+    }
+  });
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("agrobridge_theme", theme);
+    } catch {
+      // Storage unavailable
+    }
+    if (typeof document !== "undefined") {
+      document.documentElement.setAttribute("data-theme", theme);
+      document.documentElement.classList.remove("light-theme", "dark-theme");
+      document.documentElement.classList.add(`${theme}-theme`);
+    }
+  }, [theme]);
+
   // Persist form to localStorage
   useEffect(() => {
     try {
@@ -287,7 +317,9 @@ export function FarmProvider({ children }) {
     analysisDone,
     message,
     setMessage,
-    analyzeFarm
+    analyzeFarm,
+    theme,
+    toggleTheme
   };
 
   return <FarmContext.Provider value={value}>{children}</FarmContext.Provider>;

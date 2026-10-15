@@ -1,1 +1,263 @@
-*{box-sizing:border-box}html,body,#root{margin:0;min-width:320px;min-height:100%;width:100%}body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}button,input,select{font:inherit}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   AGROBRIDGE DESIGN TOKENS & SYSTEM
+   Minimal Foundation + iPhone-Standard Glassmorphism + Light/Dark Modes
+   ========================================================================== */
+
+:root,
+[data-theme="light"],
+.light-theme {
+  /* Typography */
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: 'Manrope', 'Plus Jakarta Sans', sans-serif;
+
+  /* Canvas & Base Surfaces */
+  --bg-canvas: #f3f7f4;
+  --bg-canvas-subtle: #ebf3ee;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --bg-surface-sunken: #edf4ef;
+  --bg-hover: rgba(16, 185, 129, 0.07);
+
+  /* iPhone-Standard Glassmorphism (Light Mode) */
+  --glass-bg: rgba(255, 255, 255, 0.78);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.6);
+  --glass-bg-floating: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(16, 185, 129, 0.16);
+  --glass-border-subtle: rgba(0, 0, 0, 0.07);
+  --glass-border-highlight: rgba(255, 255, 255, 0.95);
+  --glass-blur: blur(18px);
+  --glass-shadow: 0 10px 32px rgba(12, 45, 24, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  /* Text & Ink */
+  --text-primary: #11281a;
+  --text-secondary: #334d3d;
+  --text-muted: #647d6e;
+  --text-inverse: #ffffff;
+
+  /* Brand Greens & Accents */
+  --brand-primary: #0a7c36;
+  --brand-primary-hover: #07652c;
+  --brand-accent: #10b981;
+  --brand-accent-light: #34d399;
+  --brand-mint-tint: #ecf8f0;
+  --brand-mint-border: #bce5c9;
+  --brand-forest: #052d15;
+
+  /* Semantic Statuses */
+  --color-success: #15803d;
+  --color-success-bg: #eefbf1;
+  --color-success-border: #bbf0ca;
+
+  --color-warning: #b45309;
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #fde68a;
+
+  --color-danger: #dc2626;
+  --color-danger-bg: #fef2f2;
+  --color-danger-border: #fecaca;
+
+  --color-info: #0284c7;
+  --color-info-bg: #f0f9ff;
+  --color-info-border: #bae6fd;
+
+  /* Borders & Dividers */
+  --border-subtle: #e2ede5;
+  --border-card: #dbe7df;
+  --border-focus: #10b981;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(12, 45, 24, 0.04);
+  --shadow-md: 0 8px 24px rgba(12, 45, 24, 0.06);
+  --shadow-lg: 0 18px 48px rgba(12, 45, 24, 0.09);
+  --shadow-glow: 0 0 24px rgba(16, 185, 129, 0.2);
+
+  /* Geometry Radii */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 26px;
+  --radius-pill: 9999px;
+
+  /* Focus Ring */
+  --focus-ring: 0 0 0 3px rgba(16, 185, 129, 0.35);
+
+  /* Transition timings */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dark Mode Tokens */
+[data-theme="dark"],
+.dark-theme {
+  /* Canvas & Base Surfaces */
+  --bg-canvas: #07150e;
+  --bg-canvas-subtle: #0b1f15;
+  --bg-surface: #0e2218;
+  --bg-surface-elevated: #132a1e;
+  --bg-surface-sunken: #050f09;
+  --bg-hover: rgba(52, 211, 153, 0.09);
+
+  /* iPhone-Standard Glassmorphism (Dark Mode) */
+  --glass-bg: rgba(14, 34, 24, 0.76);
+  --glass-bg-subtle: rgba(11, 28, 20, 0.6);
+  --glass-bg-floating: rgba(18, 42, 30, 0.88);
+  --glass-border: rgba(52, 211, 153, 0.22);
+  --glass-border-subtle: rgba(255, 255, 255, 0.08);
+  --glass-border-highlight: rgba(255, 255, 255, 0.1);
+  --glass-blur: blur(20px);
+  --glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+
+  /* Text & Ink */
+  --text-primary: #f2fbf5;
+  --text-secondary: #c0decb;
+  --text-muted: #83a790;
+  --text-inverse: #07150e;
+
+  /* Brand Greens & Accents */
+  --brand-primary: #10b981;
+  --brand-primary-hover: #34d399;
+  --brand-accent: #34d399;
+  --brand-accent-light: #6ee7b7;
+  --brand-mint-tint: rgba(16, 185, 129, 0.14);
+  --brand-mint-border: rgba(52, 211, 153, 0.3);
+  --brand-forest: #031409;
+
+  /* Semantic Statuses */
+  --color-success: #4ade80;
+  --color-success-bg: rgba(34, 197, 94, 0.15);
+  --color-success-border: rgba(74, 222, 128, 0.3);
+
+  --color-warning: #fbbf24;
+  --color-warning-bg: rgba(245, 158, 11, 0.15);
+  --color-warning-border: rgba(251, 191, 36, 0.3);
+
+  --color-danger: #f87171;
+  --color-danger-bg: rgba(239, 68, 68, 0.15);
+  --color-danger-border: rgba(248, 113, 113, 0.3);
+
+  --color-info: #38bdf8;
+  --color-info-bg: rgba(14, 165, 233, 0.15);
+  --color-info-border: rgba(56, 189, 248, 0.3);
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(52, 211, 153, 0.14);
+  --border-card: rgba(52, 211, 153, 0.2);
+  --border-focus: #34d399;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 24px rgba(52, 211, 153, 0.25);
+
+  /* Focus Ring */
+  --focus-ring: 0 0 0 3px rgba(52, 211, 153, 0.45);
+}
+
+/* Fallback for browsers that do not support backdrop-filter */
+@supports not (backdrop-filter: blur(10px)) {
+  :root, [data-theme="light"] {
+    --glass-bg: #ffffff;
+    --glass-bg-subtle: #f8faf8;
+    --glass-bg-floating: #ffffff;
+  }
+  [data-theme="dark"] {
+    --glass-bg: #0e2218;
+    --glass-bg-subtle: #0b1c14;
+    --glass-bg-floating: #132a1e;
+  }
+}
+
+/* Base resets & typography */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: light dark;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100%;
+  width: 100%;
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Accessible utility classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

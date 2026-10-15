@@ -1,11 +1,16 @@
-/* Layout Styles - AGROBRIDGE AI Enterprise Agri-Tech */
+/* ==========================================================================
+   AGROBRIDGE SHELL & LAYOUT STYLES
+   Minimal Foundation + iPhone-Standard Glassmorphism + Responsive Shell
+   ========================================================================== */
 
 .agro-shell {
   min-height: 100vh;
   display: flex;
-  background: #f4f8f5;
-  color: #17211b;
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  position: relative;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 /* ── SIDEBAR ── */
@@ -16,24 +21,32 @@
   padding: 0 16px 20px;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #063e1d 0%, #032812 100%);
+  background: linear-gradient(180deg, #053317 0%, #031e0e 100%);
   color: #ffffff;
   z-index: 100;
-  box-shadow: 4px 0 24px rgba(2, 33, 15, 0.15);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: #0b5e2d transparent;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  scrollbar-color: rgba(52, 211, 153, 0.3) transparent;
+  transition: transform var(--transition-smooth);
+}
+
+[data-theme="dark"] .agro-sidebar {
+  background: linear-gradient(180deg, #061e12 0%, #031109 100%);
+  border-right: 1px solid rgba(52, 211, 153, 0.15);
+  box-shadow: 4px 0 28px rgba(0, 0, 0, 0.5);
 }
 
 .agro-sidebar::-webkit-scrollbar {
   width: 5px;
 }
 .agro-sidebar::-webkit-scrollbar-thumb {
-  background: #0b5e2d;
+  background: rgba(52, 211, 153, 0.3);
   border-radius: 4px;
 }
 
+/* Brand Header */
 .agro-brand {
   height: 82px;
   margin: 0 -16px 14px;
@@ -49,19 +62,20 @@
   height: 44px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #ffffff;
-  font-size: 24px;
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+  font-size: 22px;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+  flex-shrink: 0;
 }
 
 .brand-text h1 {
   margin: 0;
-  font-family: 'Manrope', sans-serif;
-  font-size: 20px;
+  font-family: var(--font-heading);
+  font-size: 19px;
   font-weight: 800;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
   color: #ffffff;
   line-height: 1.1;
 }
@@ -69,9 +83,9 @@
 .brand-text span {
   display: block;
   margin-top: 3px;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
-  color: #34d399;
+  color: #6ee7b7;
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
@@ -79,16 +93,19 @@
 /* Active Farm Mini-Widget in Sidebar */
 .sidebar-farm-badge {
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(52, 211, 153, 0.2);
-  border-radius: 14px;
+  border: 1px solid rgba(52, 211, 153, 0.22);
+  border-radius: var(--radius-md);
   padding: 12px 14px;
   margin-bottom: 18px;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .sidebar-farm-badge:hover {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(52, 211, 153, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(52, 211, 153, 0.45);
+  transform: translateY(-1px);
 }
 
 .farm-badge-header {
@@ -101,10 +118,10 @@
 .farm-badge-status {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-size: 9px;
   font-weight: 800;
-  color: #34d399;
+  color: #6ee7b7;
   letter-spacing: 0.6px;
   text-transform: uppercase;
 }
@@ -116,16 +133,16 @@
   border-radius: 50%;
   background: #10b981;
   box-shadow: 0 0 8px #10b981;
-  animation: pulse-dot 2s infinite;
+  animation: pulse-dot 2.2s infinite;
 }
 
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
+  50% { opacity: 0.4; transform: scale(0.85); }
 }
 
 .farm-badge-name {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   color: #ffffff;
   white-space: nowrap;
@@ -136,7 +153,7 @@
 .farm-badge-meta {
   font-size: 11px;
   color: #a7f3d0;
-  margin-top: 2px;
+  margin-top: 3px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -154,22 +171,23 @@
 }
 
 .score-chip {
-  background: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.25);
   color: #6ee7b7;
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   font-weight: 700;
   font-size: 10px;
+  letter-spacing: 0.3px;
 }
 
 /* Nav Menu Groups */
 .sidebar-group-title {
   padding: 10px 12px 6px;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 800;
-  letter-spacing: 1px;
+  letter-spacing: 1.1px;
   color: #6ee7b7;
-  opacity: 0.8;
+  opacity: 0.85;
   text-transform: uppercase;
 }
 
@@ -185,33 +203,34 @@
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  border-radius: 11px;
-  color: #e2f4e8;
+  border-radius: var(--radius-sm);
+  color: #d1fae5;
   font-size: 13.5px;
   font-weight: 600;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
   position: relative;
 }
 
 .agro-nav-link:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.09);
   color: #ffffff;
   transform: translateX(3px);
 }
 
 .agro-nav-link.active {
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.1) 100%);
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.28) 0%, rgba(16, 185, 129, 0.12) 100%);
   color: #ffffff;
   font-weight: 700;
   box-shadow: inset 3px 0 0 #34d399;
 }
 
 .nav-link-icon {
-  font-size: 18px;
-  width: 24px;
+  font-size: 17px;
+  width: 22px;
   display: grid;
   place-items: center;
+  flex-shrink: 0;
 }
 
 .nav-link-badge {
@@ -219,24 +238,24 @@
   font-size: 9px;
   font-weight: 800;
   padding: 2px 6px;
-  border-radius: 6px;
-  background: rgba(52, 211, 153, 0.2);
+  border-radius: var(--radius-xs);
+  background: rgba(52, 211, 153, 0.22);
   color: #a7f3d0;
   letter-spacing: 0.5px;
 }
 
 .nav-link-badge.hot {
-  background: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.28);
   color: #fca5a5;
 }
 
-/* Bottom elements */
+/* Sidebar Data Sovereignty Box */
 .sidebar-safe-box {
   margin-top: auto;
   padding: 12px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
   display: flex;
   gap: 10px;
   align-items: flex-start;
@@ -244,7 +263,8 @@
 }
 
 .safe-icon {
-  font-size: 18px;
+  font-size: 17px;
+  flex-shrink: 0;
 }
 
 .safe-text strong {
@@ -264,13 +284,13 @@
 
 .sidebar-brand-footer {
   padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 10px;
   color: #6ee7b7;
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 /* ── PAGE AREA & TOPBAR ── */
@@ -280,40 +300,46 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-canvas);
+  transition: background-color var(--transition-normal);
 }
 
+/* iPhone-Standard Frosted Glass Topbar */
 .agro-topbar {
   position: sticky;
   top: 0;
   z-index: 80;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid #e2ebe4;
-  height: 64px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  height: 66px;
   padding: 0 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  box-shadow: 0 2px 12px rgba(10, 45, 20, 0.03);
+  box-shadow: var(--glass-shadow);
+  transition: background var(--transition-normal), border-color var(--transition-normal);
 }
 
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .mobile-menu-btn {
   display: none;
-  background: transparent;
-  border: 1px solid #d1ded5;
-  border-radius: 8px;
+  background: var(--bg-surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   width: 38px;
   height: 38px;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
-  color: #1b4d29;
+  color: var(--brand-primary);
+  transition: background var(--transition-fast);
 }
 
 .breadcrumb-area {
@@ -324,42 +350,46 @@
 .breadcrumb-root {
   font-size: 10px;
   font-weight: 800;
-  color: #059669;
+  color: var(--brand-accent);
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
 .breadcrumb-current {
-  font-family: 'Manrope', sans-serif;
-  font-size: 18px;
+  font-family: var(--font-heading);
+  font-size: 17px;
   font-weight: 800;
-  color: #14351f;
+  color: var(--text-primary);
   line-height: 1.2;
 }
 
 .topbar-center {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
+/* Frosted status pills */
 .farm-pill-widget {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #eaf6ee;
-  border: 1px solid #c9e5d1;
+  background: var(--glass-bg-subtle);
+  border: 1px solid var(--glass-border);
   padding: 6px 14px;
-  border-radius: 30px;
+  border-radius: var(--radius-pill);
   font-size: 12px;
   font-weight: 600;
-  color: #165b2d;
+  color: var(--text-secondary);
   text-decoration: none;
-  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all var(--transition-normal);
 }
 
 .farm-pill-widget:hover {
-  background: #d8eedf;
+  background: var(--bg-hover);
+  border-color: var(--brand-accent);
   transform: translateY(-1px);
 }
 
@@ -367,76 +397,122 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #10b981;
+  background: var(--brand-accent);
+  box-shadow: 0 0 6px var(--brand-accent);
 }
 
 .weather-pill-widget {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #ffffff;
-  border: 1px solid #e1ebe3;
+  background: var(--glass-bg-subtle);
+  border: 1px solid var(--glass-border);
   padding: 6px 12px;
-  border-radius: 30px;
+  border-radius: var(--radius-pill);
   font-size: 12px;
   font-weight: 700;
-  color: #2b4934;
+  color: var(--text-primary);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+}
+
+/* Theme Toggle Button (Light / Dark Glass) */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 12px;
+  background: var(--glass-bg-subtle);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all var(--transition-normal);
+}
+
+.theme-toggle-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--brand-accent);
+  transform: translateY(-1px);
+}
+
+.theme-toggle-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.theme-toggle-text {
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
 }
 
 .topbar-notify-btn {
   position: relative;
-  background: #f0f7f2;
-  border: 1px solid #dce8df;
+  background: var(--glass-bg-subtle);
+  border: 1px solid var(--glass-border);
   width: 38px;
   height: 38px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
   font-size: 16px;
   cursor: pointer;
-  color: #1e452a;
-  transition: background 0.2s ease;
+  color: var(--text-primary);
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .topbar-notify-btn:hover {
-  background: #e1efe5;
+  background: var(--bg-hover);
+  border-color: var(--brand-accent);
+  transform: translateY(-1px);
 }
 
 .notify-badge {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 7px;
+  right: 7px;
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 0 2px #ffffff;
+  background: var(--brand-accent);
+  box-shadow: 0 0 0 2px var(--bg-surface);
 }
 
 .user-profile-badge {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 4px 8px 4px 4px;
-  border-radius: 30px;
-  background: #ffffff;
-  border: 1px solid #e1eae3;
+  padding: 4px 10px 4px 4px;
+  border-radius: var(--radius-pill);
+  background: var(--glass-bg-subtle);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .user-avatar {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  background: linear-gradient(135deg, var(--brand-mint-tint), var(--brand-accent));
   display: grid;
   place-items: center;
-  font-size: 18px;
+  font-size: 16px;
+  flex-shrink: 0;
 }
 
 .user-info {
@@ -445,59 +521,69 @@
 }
 
 .user-role {
-  font-size: 9.5px;
-  color: #64748b;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .user-name {
   font-size: 12px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   line-height: 1.1;
 }
 
 /* ── MAIN CONTENT OUTLET ── */
 .agro-main-wrapper {
   flex: 1;
-  padding: 24px 28px 40px;
+  padding: 24px 28px 48px;
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* Global status alert banner */
 .agro-status-banner {
-  margin-bottom: 20px;
-  padding: 12px 18px;
-  border-radius: 12px;
-  background: #effaf2;
-  border: 1px solid #c8e9d1;
-  color: #165b2d;
+  margin-bottom: 24px;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  background: var(--color-success-bg);
+  border: 1px solid var(--color-success-border);
+  color: var(--color-success);
   font-size: 13px;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-shadow: var(--shadow-sm);
   animation: fadeIn 0.3s ease;
 }
 
 .status-banner-close {
   background: transparent;
   border: none;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
-  color: #2b7a45;
+  color: var(--color-success);
+  line-height: 1;
+  padding: 4px;
 }
 
 /* ── FOOTER ── */
 .agro-footer {
   margin-top: auto;
-  border-top: 1px solid #e2ebe4;
+  border-top: 1px solid var(--border-subtle);
   padding: 20px 28px;
-  background: #ffffff;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
@@ -506,20 +592,23 @@
   align-items: center;
   gap: 8px;
   font-weight: 700;
-  color: #154523;
+  color: var(--text-primary);
 }
 
 .footer-links {
   display: flex;
   gap: 18px;
+  flex-wrap: wrap;
 }
 
 .footer-links a {
-  color: #475569;
-  text-decoration: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: color var(--transition-fast);
 }
+
 .footer-links a:hover {
-  color: #059669;
+  color: var(--brand-accent);
 }
 
 /* Responsive Breakpoints */
@@ -542,9 +631,10 @@
   .sidebar-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 90;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 }
 
@@ -553,17 +643,20 @@
     padding: 0 16px;
   }
   .agro-main-wrapper {
-    padding: 16px 14px 30px;
+    padding: 16px 14px 32px;
   }
   .topbar-center {
     display: none;
   }
+  .theme-toggle-text {
+    display: none;
+  }
   .breadcrumb-current {
-    font-size: 16px;
+    font-size: 15px;
   }
   .agro-footer {
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     text-align: center;
   }
 }

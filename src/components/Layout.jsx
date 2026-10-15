@@ -16,7 +16,7 @@ const PAGE_TITLES = {
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
-  const { form, farmHealth, weatherData, message, setMessage } = useFarm();
+  const { form, farmHealth, weatherData, message, setMessage, theme, toggleTheme } = useFarm();
 
   const currentMeta = PAGE_TITLES[location.pathname] || {
     section: "Platform",
@@ -57,7 +57,7 @@ export default function Layout() {
         >
           <div className="farm-badge-header">
             <span className="farm-badge-status">Sentinel-2 Live</span>
-            <span style={{ fontSize: "11px", color: "#34d399" }}>⚙️ Edit</span>
+            <span style={{ fontSize: "11px", color: "var(--brand-accent)" }}>⚙️ Edit</span>
           </div>
           <div className="farm-badge-name">
             {form.farmerName ? `${form.farmerName}'s Farm` : "Active Farm"}
@@ -204,6 +204,17 @@ export default function Layout() {
           </div>
 
           <div className="topbar-right">
+            <button
+              type="button"
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              aria-label={theme === "dark" ? "Switch to daylight mode" : "Switch to dark glass mode"}
+              title={theme === "dark" ? "Switch to daylight mode" : "Switch to dark glass mode"}
+            >
+              <span className="theme-toggle-icon">{theme === "dark" ? "☀️" : "🌙"}</span>
+              <span className="theme-toggle-text">{theme === "dark" ? "Light" : "Dark"}</span>
+            </button>
+
             <button
               type="button"
               className="topbar-notify-btn"

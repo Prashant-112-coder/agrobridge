@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useFarm } from "../context/FarmContext";
 import "./PomegranateAI.css";
 
 // Assets
@@ -385,6 +386,7 @@ function analyzeImagePixels(imgElement) {
 }
 
 export default function PomegranateAI() {
+  const { theme, toggleTheme } = useFarm();
   const [activeNav, setActiveNav] = useState("Dashboard");
   const [searchQuery, setSearchQuery] = useState("");
   const [dragOver, setDragOver] = useState(false);
@@ -779,6 +781,16 @@ export default function PomegranateAI() {
           </div>
 
           <div className="ps-topbar-right">
+            <button
+              type="button"
+              className="ps-theme-btn"
+              onClick={toggleTheme}
+              aria-label={theme === "dark" ? "Switch to daylight mode" : "Switch to dark glass mode"}
+              title={theme === "dark" ? "Switch to daylight mode" : "Switch to dark glass mode"}
+            >
+              <span>{theme === "dark" ? "☀️" : "🌙"}</span>
+            </button>
+
             <button
               type="button"
               className="ps-bell-btn"

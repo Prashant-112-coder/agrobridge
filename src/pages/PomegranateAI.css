@@ -1519,3 +1519,159 @@
     flex-direction: column;
   }
 }
+
+/* ── PomeScan Theme Toggle & Dark Mode Integration ── */
+.ps-theme-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--glass-bg-subtle, #f1f5f9);
+  border: 1px solid var(--border-card, #e2e8f0);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary, #0f172a);
+}
+
+.ps-theme-btn:hover {
+  background: var(--bg-hover, #e2e8f0);
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .ps-app {
+  background-color: var(--bg-canvas, #07150d);
+  color: var(--text-primary, #f2fbf5);
+}
+
+[data-theme="dark"] .ps-sidebar {
+  background: var(--bg-surface, #0c2014);
+  border-right-color: var(--border-subtle, rgba(52, 211, 153, 0.15));
+}
+
+[data-theme="dark"] .ps-brand-title {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .ps-nav-item {
+  color: var(--text-secondary, #c0decb);
+}
+
+[data-theme="dark"] .ps-nav-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .ps-nav-item.active {
+  background: linear-gradient(90deg, rgba(220, 38, 38, 0.25), rgba(220, 38, 38, 0.1));
+  color: #fca5a5;
+  border-left-color: #ef4444;
+}
+
+[data-theme="dark"] .ps-topbar {
+  background: var(--glass-bg, rgba(14, 34, 24, 0.8));
+  backdrop-filter: var(--glass-blur, blur(16px));
+  -webkit-backdrop-filter: var(--glass-blur, blur(16px));
+  border-bottom-color: var(--glass-border, rgba(52, 211, 153, 0.2));
+}
+
+[data-theme="dark"] .ps-search-bar {
+  background: var(--bg-surface-sunken, #081a10);
+  border-color: var(--border-card, rgba(52, 211, 153, 0.2));
+}
+
+[data-theme="dark"] .ps-search-bar input {
+  color: var(--text-primary, #f2fbf5);
+}
+
+[data-theme="dark"] .ps-search-bar input::placeholder {
+  color: var(--text-muted, #83a790);
+}
+
+[data-theme="dark"] .ps-bell-btn {
+  background: var(--bg-surface-sunken, #081a10);
+  border-color: var(--border-card, rgba(52, 211, 153, 0.2));
+  color: var(--text-primary, #f2fbf5);
+}
+
+[data-theme="dark"] .ps-user-profile {
+  background: var(--bg-surface-sunken, #081a10);
+  border-color: var(--border-card, rgba(52, 211, 153, 0.2));
+}
+
+[data-theme="dark"] .ps-user-info strong {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .ps-card,
+[data-theme="dark"] .ps-upload-card,
+[data-theme="dark"] .ps-activity-card,
+[data-theme="dark"] .ps-quick-card,
+[data-theme="dark"] .ps-history-card,
+[data-theme="dark"] .ps-result-card,
+[data-theme="dark"] .ps-modal-content {
+  background: var(--bg-surface, #0e2218);
+  border-color: var(--border-card, rgba(52, 211, 153, 0.2));
+  color: var(--text-primary, #f2fbf5);
+}
+
+[data-theme="dark"] .ps-dropzone {
+  background: var(--bg-surface-sunken, #081a10);
+  border-color: var(--border-card, rgba(52, 211, 153, 0.2));
+}
+
+[data-theme="dark"] .ps-drop-title {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .ps-drop-sub {
+  color: var(--text-muted, #83a790);
+}
+
+[data-theme="dark"] .ps-sample-card {
+  background: var(--bg-surface-sunken, #081a10);
+  border-color: var(--border-subtle, rgba(52, 211, 153, 0.15));
+}
+
+[data-theme="dark"] .ps-sample-name {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .ps-table th {
+  background: var(--bg-surface-sunken, #081a10);
+  color: var(--text-muted, #83a790);
+  border-bottom-color: var(--border-subtle, rgba(52, 211, 153, 0.15));
+}
+
+[data-theme="dark"] .ps-table td {
+  border-bottom-color: var(--border-subtle, rgba(52, 211, 153, 0.15));
+  color: var(--text-secondary, #c0decb);
+}
+
+[data-theme="dark"] .ps-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .ps-diag-pathogen {
+  color: var(--brand-accent, #34d399);
+}
+
+[data-theme="dark"] .ps-section-title {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .ps-info-block {
+  background: var(--bg-surface-sunken, #081a10);
+  border-color: var(--border-subtle, rgba(52, 211, 153, 0.15));
+}
+
+[data-theme="dark"] .ps-info-block h4 {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .ps-info-block p,
+[data-theme="dark"] .ps-info-block li {
+  color: var(--text-secondary, #c0decb);
+}
+
