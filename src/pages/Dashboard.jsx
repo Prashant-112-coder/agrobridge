@@ -37,113 +37,98 @@ export default function Dashboard() {
 
   return (
     <div className="dash-container">
-      {/* ── HERO BANNER ── */}
-      <section className="dash-hero-card">
-        <div className="hero-content">
-          <div className="hero-welcome-badge">
-            <span>🌱</span>
-            <span>Active Farm Intelligence</span>
+      {/* ── IPHONE-STANDARD GLASS WIDGET: FARM HEALTH (Page 1 Guide) ── */}
+      <section className="iphone-glass-card">
+        {/* Top bar of widget */}
+        <div className="ios-widget-topbar">
+          <span className="ios-brand-label">AGROBRIDGE</span>
+          <div className="ios-badge-group">
+            <span className="ios-field-pill">FIELD OVERVIEW</span>
+            <span className="ios-location-pill">📍 {village}, {taluk} ({state}) • {crop} ({area})</span>
           </div>
-          <h2>Welcome back, {farmerName}</h2>
+        </div>
+
+        {/* Headline Row: Title, Subtitle & Interactive Actions */}
+        <div className="ios-widget-headline-row">
+          <div className="ios-widget-title-area">
+            <h2>Farm health</h2>
+            <p>Signals into clear next steps • Welcome back, {farmerName}</p>
+          </div>
+          <div className="ios-widget-actions">
+            <button
+              type="button"
+              className="ios-btn-primary"
+              onClick={analyzeFarm}
+              disabled={analyzing}
+            >
+              <span>{analyzing ? "⟳" : "🛰️"}</span>
+              <span>{analyzing ? "Syncing..." : "Re-Analyze Satellite"}</span>
+            </button>
+            <Link to="/diagnostics" className="ios-btn-secondary">
+              <span>⚙️</span>
+              <span>Farm Settings</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* 4 Frosted Capsule Metrics in a row (Matching Page 1 Mockup) */}
+        <div className="ios-metric-capsules">
+          {/* NDVI Capsule */}
+          <div className="ios-capsule">
+            <span className="ios-capsule-lbl">NDVI</span>
+            <div className="ios-capsule-val-row">
+              <strong className="ios-capsule-val">{ndvi}</strong>
+              <span className="ios-capsule-badge">{Number(ndvi) >= 0.5 ? "Dense" : "Moderate"}</span>
+            </div>
+            <span className="ios-capsule-sub">Sentinel-2 10m Canopy</span>
+          </div>
+
+          {/* RISK Capsule */}
+          <div className="ios-capsule">
+            <span className="ios-capsule-lbl">RISK</span>
+            <div className="ios-capsule-val-row">
+              <strong className={`ios-capsule-val risk-${healthStatus.toLowerCase()}`}>
+                {healthStatus === "GOOD" ? "LOW" : healthStatus}
+              </strong>
+              <span className="ios-capsule-badge">{healthScore}/100</span>
+            </div>
+            <span className="ios-capsule-sub">Composite Health Index</span>
+          </div>
+
+          {/* WEATHER Capsule */}
+          <div className="ios-capsule">
+            <span className="ios-capsule-lbl">WEATHER</span>
+            <div className="ios-capsule-val-row">
+              <strong className="ios-capsule-val">{temp}°</strong>
+              <span className="ios-capsule-badge">{rain === 0 ? "0mm rain" : `${rain}mm`}</span>
+            </div>
+            <span className="ios-capsule-sub">{humidity}% Hum • {wind} km/h Wind</span>
+          </div>
+
+          {/* SOIL Capsule */}
+          <div className="ios-capsule">
+            <span className="ios-capsule-lbl">SOIL PH</span>
+            <div className="ios-capsule-val-row">
+              <strong className="ios-capsule-val">{soilPH}</strong>
+              <span className="ios-capsule-badge">pH</span>
+            </div>
+            <span className="ios-capsule-sub">{form.soilSource === "test" ? "Lab Test" : "Location Grid"}</span>
+          </div>
+        </div>
+
+        {/* Priority Action Capsule (Matching Page 1 Mockup) */}
+        <div className="ios-priority-action-capsule">
+          <div className="priority-label-wrap">
+            <span className="priority-dot" />
+            <strong>Priority action</strong>
+          </div>
           <p>
-            Field monitoring active for <strong>{village}, {taluk}</strong> ({state}) • <strong>{crop} ({area})</strong>
+            Check soil moisture before irrigation •{" "}
+            {isSpraySafe
+              ? `Favorable foliar spray window today (calm wind at ${wind} km/h, 0% rain risk). Safe for nutrient application.`
+              : `Caution: Postpone foliar spraying due to wind (${wind} km/h) or precipitation risk.`}
           </p>
-        </div>
-        <div className="hero-actions">
-          <button
-            type="button"
-            className="hero-btn-primary"
-            onClick={analyzeFarm}
-            disabled={analyzing}
-          >
-            <span>{analyzing ? "⟳" : "🛰️"}</span>
-            <span>{analyzing ? "Syncing Satellites..." : "Re-Analyze Satellite"}</span>
-          </button>
-          <Link to="/diagnostics" className="hero-btn-secondary">
-            <span>⚙️</span>
-            <span>Farm Settings</span>
-          </Link>
-        </div>
-      </section>
-
-      {/* ── 4 KPI CARDS ── */}
-      <section className="dash-kpi-grid">
-        {/* Card 1: Health Score */}
-        <div className="kpi-card health">
-          <div className="kpi-header">
-            <div className="kpi-icon-wrap">❤️</div>
-            <span className="kpi-tag">{healthStatus}</span>
-          </div>
-          <span className="kpi-title">Farm Health Index</span>
-          <div className="kpi-value-row">
-            <span className="kpi-main-val">{healthScore}</span>
-            <span className="kpi-unit">/ 100</span>
-          </div>
-          <span className="kpi-subtext">Composite index: NDVI (50%), Soil (30%), Climate (20%)</span>
-        </div>
-
-        {/* Card 2: Satellite NDVI */}
-        <div className="kpi-card satellite">
-          <div className="kpi-header">
-            <div className="kpi-icon-wrap">🛰️</div>
-            <span className="kpi-tag">Sentinel-2</span>
-          </div>
-          <span className="kpi-title">Vegetation Canopy (NDVI)</span>
-          <div className="kpi-value-row">
-            <span className="kpi-main-val">{ndvi}</span>
-            <span className="kpi-unit">{Number(ndvi) >= 0.5 ? "Dense" : "Moderate"}</span>
-          </div>
-          <span className="kpi-subtext">10m multispectral resolution • Healthy photosynthetic activity</span>
-        </div>
-
-        {/* Card 3: Soil Quality */}
-        <div className="kpi-card soil">
-          <div className="kpi-header">
-            <div className="kpi-icon-wrap">🧪</div>
-            <span className="kpi-tag">{form.soilSource === "test" ? "Lab Test" : "Location Grid"}</span>
-          </div>
-          <span className="kpi-title">Soil pH &amp; Nutrition</span>
-          <div className="kpi-value-row">
-            <span className="kpi-main-val">{soilPH}</span>
-            <span className="kpi-unit">pH</span>
-          </div>
-          <span className="kpi-subtext">
-            {Number(soilPH) >= 6 && Number(soilPH) <= 7.5 ? "Optimal nutrient absorption range" : "Requires pH balancing"}
-          </span>
-        </div>
-
-        {/* Card 4: Farm Microclimate */}
-        <div className="kpi-card weather">
-          <div className="kpi-header">
-            <div className="kpi-icon-wrap">🌤️</div>
-            <span className="kpi-tag">Live Sensors</span>
-          </div>
-          <span className="kpi-title">Microclimate</span>
-          <div className="kpi-value-row">
-            <span className="kpi-main-val">{temp}°</span>
-            <span className="kpi-unit">C</span>
-          </div>
-          <span className="kpi-subtext">{humidity}% Humidity • {wind} km/h Wind • {rain} mm Rain</span>
-        </div>
-      </section>
-
-      {/* ── AGRONOMIC ADVISORY STRIP ── */}
-      <section className="dash-advisory-strip">
-        <div className="strip-info">
-          <span className="strip-icon">{isSpraySafe ? "🛡️" : "⚠️"}</span>
-          <div className="strip-text">
-            <strong>
-              {isSpraySafe ? "Favorable Foliar Spray Window" : "Caution: Postpone Foliar Spraying"}
-            </strong>
-            <p>
-              {isSpraySafe
-                ? `Wind speed is calm at ${wind} km/h with 0% precipitation risk today. Safe for nutrient & bio-pesticide applications.`
-                : `Wind speed (${wind} km/h) or precipitation risk may cause chemical drift or wash-off.`}
-            </p>
-          </div>
-        </div>
-        <div className="strip-badge">
-          <span>🌾 Crop Stage: {form.cropStage || "Vegetative"}</span>
+          <span className="priority-stage-tag">🌾 {form.cropStage || "Vegetative"}</span>
         </div>
       </section>
 

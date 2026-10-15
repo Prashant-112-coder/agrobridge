@@ -170,6 +170,11 @@ export default function Layout() {
 
       {/* ── MAIN CONTENT AREA ── */}
       <div className="agro-content-area">
+        {/* iOS-Standard Ambient Blur Glows for Glass Refraction */}
+        <div className="ios-glow-orb glow-top-left" aria-hidden="true" />
+        <div className="ios-glow-orb glow-top-right" aria-hidden="true" />
+        <div className="ios-glow-orb glow-mid-center" aria-hidden="true" />
+
         {/* Sticky Header Topbar */}
         <header className="agro-topbar">
           <div className="topbar-left">
